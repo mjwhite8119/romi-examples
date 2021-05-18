@@ -1,0 +1,81 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+
+public class ColorDistance extends CommandBase {
+  private final Drivetrain m_drive;
+  private final double m_distance;
+  private double m_speed;
+  private final NetworkTable m_colorData;
+  // private NetworkTable m_colorData;
+
+  /**
+   * Creates a new DriveDistance. This command will drive your your robot for a desired distance at
+   * a desired speed.
+   *
+   * @param speed The speed at which the robot will drive
+   * @param inches The number of inches the robot will drive
+   * @param drive The drivetrain subsystem on which this command will run
+   */
+  public ColorDistance(double speed, double inches, NetworkTable colorData, Drivetrain drive) {
+    m_distance = inches;
+    m_speed = speed;
+    m_drive = drive;
+    m_colorData = colorData;
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    m_drive.arcadeDrive(0, 0);
+    m_drive.resetEncoders();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    m_drive.arcadeDrive(m_speed, 0);
+    // Handle color sensor
+    NetworkTableEntry blueEntry = m_colorData.getEntry("Blue");
+    NetworkTableEntry greenEntry = m_colorData.getEntry("Green");
+    NetworkTableEntry redEntry = m_colorData.getEntry("Red");
+
+    if (redEntry.getDouble(0.0) > 8000.0) {
+      System.out.print("Red");
+      m_speed = 0.0;
+    } 
+    else if (greenEntry.getDouble(0.0) > 8000.0) {
+      System.out.print("Yellow");
+      m_speed = 0.7;
+    } 
+    else if (blueEntry.getDouble(0.0) > 4300.0 & greenEntry.getDouble(0.0) > 4900.0) {
+      System.out.print("Blue");
+      m_speed = 0.9;
+    } 
+    else {
+      System.out.print("Floor");  
+      m_speed = 0.5;
+    }
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_drive.arcadeDrive(0, 0);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    // Compare distance travelled from start to desired distance
+    return Math.abs(m_drive.getAverageDistanceInch()) >= m_distance;
+  }
+}
