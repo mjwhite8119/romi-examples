@@ -20,9 +20,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
-
+import frc.robot.sensors.ColorSensor;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
@@ -44,6 +43,8 @@ public class RobotContainer {
   public NetworkTable m_targetData;
   public NetworkTable m_colorData;
   private NetworkTableInstance m_nTableInstance = NetworkTableInstance.getDefault();
+
+  public ColorSensor m_colorSensor;
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -68,6 +69,8 @@ public class RobotContainer {
     m_targetData = m_nTableInstance.getTable("targetData");
     m_colorData = m_nTableInstance.getTable("Romi/CustomDevice/REV-ColorSensorV3");
 
+    m_colorSensor = new ColorSensor(m_colorData);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -81,7 +84,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
-    m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
+    m_drivetrain.setDefaultCommand(getArcadeDriveCommand(m_colorSensor));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
@@ -92,7 +95,7 @@ public class RobotContainer {
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
-    m_chooser.addOption("Auto Routine Color", new AutonomousColor(m_drivetrain, m_colorData));
+    m_chooser.addOption("Auto Routine Color", new AutonomousColor(m_drivetrain, m_colorSensor));
     SmartDashboard.putData(m_chooser);
   }
 
@@ -110,8 +113,11 @@ public class RobotContainer {
    *
    * @return the command to run in teleop
    */
-  public Command getArcadeDriveCommand() {
+  public Command getArcadeDriveCommand(ColorSensor colorSensor) {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(2));
+        m_drivetrain, 
+        () -> -m_controller.getRawAxis(1), 
+        () -> m_controller.getRawAxis(2),
+        colorSensor);
   }
 }

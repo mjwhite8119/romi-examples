@@ -7,11 +7,14 @@ package frc.robot.commands;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.Supplier;
+import frc.robot.sensors.ColorSensor;
+import frc.robot.utilities.MatchedColor;
 
 public class ArcadeDrive extends CommandBase {
   private final Drivetrain m_drivetrain;
   private final Supplier<Double> m_xaxisSpeedSupplier;
   private final Supplier<Double> m_zaxisRotateSupplier;
+  private final ColorSensor m_colorSensor;
 
   /**
    * Creates a new ArcadeDrive. This command will drive your robot according to the speed supplier
@@ -24,10 +27,12 @@ public class ArcadeDrive extends CommandBase {
   public ArcadeDrive(
       Drivetrain drivetrain,
       Supplier<Double> xaxisSpeedSupplier,
-      Supplier<Double> zaxisRotateSupplier) {
+      Supplier<Double> zaxisRotateSupplier,
+      ColorSensor colorSensor) {
     m_drivetrain = drivetrain;
     m_xaxisSpeedSupplier = xaxisSpeedSupplier;
     m_zaxisRotateSupplier = zaxisRotateSupplier;
+    m_colorSensor = colorSensor;
     addRequirements(drivetrain);
   }
 
@@ -38,6 +43,7 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    MatchedColor m_match = m_colorSensor.getMatchedColor();
     m_drivetrain.arcadeDrive(m_xaxisSpeedSupplier.get(), m_zaxisRotateSupplier.get());
   }
 

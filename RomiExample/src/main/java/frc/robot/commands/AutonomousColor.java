@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.sensors.ColorSensor;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.networktables.NetworkTable;
@@ -15,9 +16,9 @@ public class AutonomousColor extends SequentialCommandGroup {
    *
    * @param drivetrain The drivetrain subsystem on which this command will run
    */
-  public AutonomousColor(Drivetrain drivetrain, NetworkTable colorData) {
+  public AutonomousColor(Drivetrain drivetrain, ColorSensor colorSensor) {
     addCommands(
-        new ColorDistance(0.5, 70, colorData, drivetrain)
+        new ColorDistance(0.5, 70, colorSensor, drivetrain)
         );
   }
 }

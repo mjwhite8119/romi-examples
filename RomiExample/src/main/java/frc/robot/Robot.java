@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+// import edu.wpi.first.networktables.NetworkTableEntry;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -86,33 +86,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // Handle color sensor
-    NetworkTableEntry blueEntry = m_robotContainer.m_colorData.getEntry("Blue");
-    NetworkTableEntry greenEntry = m_robotContainer.m_colorData.getEntry("Green");
-    NetworkTableEntry redEntry = m_robotContainer.m_colorData.getEntry("Red");
-
-    if (redEntry.getDouble(0.0) > 8000.0) {
-      System.out.print("Red");
-    } 
-    else if (greenEntry.getDouble(0.0) > 8000.0) {
-      System.out.print("Yellow");
-    } 
-    else if (blueEntry.getDouble(0.0) > 4300.0 & greenEntry.getDouble(0.0) > 4900.0) {
-      System.out.print("Blue");
-    } 
-    else {
-      System.out.print("Floor");  
-    }
     
-
     // Handle camera output
-    NetworkTableEntry centerXEntry = m_robotContainer.m_targetData.getEntry("centerX");
-    SmartDashboard.putNumber("Center X", centerXEntry.getDouble(0.0));
-    if (centerXEntry.getDouble(0.0) > 60) {
-      m_robotContainer.m_onboardIO.setGreenLed(true);
-    } else {
-      m_robotContainer.m_onboardIO.setGreenLed(false);
-    }
+    // NetworkTableEntry centerXEntry = m_robotContainer.m_targetData.getEntry("centerX");
+    // SmartDashboard.putNumber("Center X", centerXEntry.getDouble(0.0));
+    // if (centerXEntry.getDouble(0.0) > 60) {
+    //   m_robotContainer.m_onboardIO.setGreenLed(true);
+    // } else {
+    //   m_robotContainer.m_onboardIO.setGreenLed(false);
+    // }
     
   }
 
