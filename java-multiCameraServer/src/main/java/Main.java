@@ -355,10 +355,6 @@ public final class Main {
       return;
     }
 
-    // Attach color sensor 
-    ColorSensorV3 m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    Color detectedColor = m_colorSensor.getColor();
-
     // start NetworkTables
     NetworkTableInstance ntinst = NetworkTableInstance.getDefault();
     if (server) {
@@ -496,7 +492,7 @@ public final class Main {
           }
           // Give the output stream a new image to display
           outputStream.putFrame(mat);
-          threadCounter1Entry.setDouble(loopCtr1);
+          // threadCounter1Entry.setDouble(loopCtr1);
         }
       });
 

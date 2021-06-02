@@ -18,7 +18,7 @@ public class AutonomousColor extends SequentialCommandGroup {
    */
   public AutonomousColor(Drivetrain drivetrain, ColorSensor colorSensor) {
     addCommands(
-        new ColorDistance(0.5, 70, colorSensor, drivetrain)
+        new ColorDistance(0.3, 70, colorSensor, drivetrain)
         );
   }
 }

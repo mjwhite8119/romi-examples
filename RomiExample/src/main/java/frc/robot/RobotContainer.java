@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.ServoCommand;
 import frc.robot.commands.AutonomousColor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
+import frc.robot.subsystems.RomiServo;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,6 +39,7 @@ public class RobotContainer {
 
   // Assumes a gamepad plugged into channnel 0
   private final Joystick m_controller = new Joystick(0);
+  private final RomiServo m_servo = new RomiServo();
 
   public static int team = 2928;
 
@@ -64,8 +67,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     // Open the network tables
-    m_nTableInstance.startClientTeam(team);
-    m_nTableInstance.startDSClient();
     m_targetData = m_nTableInstance.getTable("targetData");
     m_colorData = m_nTableInstance.getTable("Romi/CustomDevice/REV-ColorSensorV3");
 
@@ -85,6 +86,8 @@ public class RobotContainer {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand(m_colorSensor));
+
+    m_servo.setDefaultCommand( new ServoCommand(m_servo, m_controller));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);

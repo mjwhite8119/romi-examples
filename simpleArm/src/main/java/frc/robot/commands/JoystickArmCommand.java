@@ -45,15 +45,18 @@ public class JoystickArmCommand extends CommandBase {
 
     if(m_joystick.getRawButton(Constants.Joystick.TOPLEFT)) {
       m_arm.incrementLift(-Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Lift " );
     }
     if(m_joystick.getRawButton(Constants.Joystick.TOPRIGHT)) {
       m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT);
     }
     if(m_joystick.getRawButton(Constants.Joystick.BOTTOMLEFT)) {
       m_arm.incrementTilt(Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Lift " );
     }
     if(m_joystick.getRawButton(Constants.Joystick.BOTTOMRIGHT)) {
       m_arm.incrementTilt(-Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Tilt " );
     }
     if(m_joystick.getRawButton(Constants.Joystick.Y)) {
       m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT);

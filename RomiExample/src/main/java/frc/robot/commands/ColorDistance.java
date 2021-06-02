@@ -13,6 +13,7 @@ public class ColorDistance extends CommandBase {
   private final Drivetrain m_drive;
   private final double m_distance;
   private double m_speed;
+  private double m_last_speed;
   private final ColorSensor m_colorSensor;
 
   /**
@@ -26,6 +27,7 @@ public class ColorDistance extends CommandBase {
   public ColorDistance(double speed, double inches, ColorSensor colorSensor, Drivetrain drive) {
     m_distance = inches;
     m_speed = speed;
+    m_last_speed = speed;
     m_drive = drive;
     m_colorSensor = colorSensor;
     addRequirements(drive);
@@ -42,7 +44,7 @@ public class ColorDistance extends CommandBase {
   @Override
   public void execute() {
     MatchedColor m_match = m_colorSensor.getMatchedColor();
-
+    
     switch (m_match) {
       case RED:
         System.out.print("Red");
@@ -51,20 +53,21 @@ public class ColorDistance extends CommandBase {
 
       case YELLOW:
         System.out.print("Yellow");
-        m_speed = 0.7;
+        m_speed = 0.6;
         break;
 
       case BLUE:
         System.out.print("Blue");
-        m_speed = 0.9; 
+        m_speed = 0.8; 
         break;
 
       default:  
         System.out.print("Floor");  
-        m_speed = 0.5;
+        // m_speed = m_last_speed;
         break;
     }
-
+    System.out.print(m_speed); 
+    m_last_speed = m_speed;
     m_drive.arcadeDrive(m_speed, 0);
   }
 
