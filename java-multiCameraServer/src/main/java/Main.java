@@ -393,7 +393,7 @@ public final class Main {
     if (cameras.size() >= 1) {
       System.out.println("Starting image processing..");
       VisionThread visionThread = new VisionThread(cameras.get(0),
-              new GripPipeline(), pipeline -> {
+              new LineFollowGripPipeline(), pipeline -> {
         // do something with pipeline results
         imageWidth = cameras.get(0).getVideoMode().width;
         imageHeight = cameras.get(0).getVideoMode().height;
