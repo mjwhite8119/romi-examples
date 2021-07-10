@@ -43,8 +43,15 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Get the matched color
     MatchedColor m_match = m_colorSensor.getMatchedColor();
-    m_drivetrain.arcadeDrive(m_xaxisSpeedSupplier.get(), m_zaxisRotateSupplier.get());
+
+    // Do something if the color matches
+    if (m_match == MatchedColor.RED) {
+      m_drivetrain.arcadeDrive(0.2,0.2);
+    } else {
+      m_drivetrain.arcadeDrive(m_xaxisSpeedSupplier.get(), m_zaxisRotateSupplier.get());
+    }   
   }
 
   // Called once the command ends or is interrupted.
