@@ -43,26 +43,68 @@ public class JoystickArmCommand extends CommandBase {
       m_startTime = System.currentTimeMillis();
     }
 
-    if(m_joystick.getRawButton(Constants.Joystick.TOPLEFT)) {
+    if(m_joystick.getRawButton(Constants.Joystick.CIRCLE_BUTTON)) {
       m_arm.incrementLift(-Constants.Arm.SERVO_INCREMENT);
-      System.out.println("Lift " );
+      System.out.println("Lift -" );
     }
-    if(m_joystick.getRawButton(Constants.Joystick.TOPRIGHT)) {
+    if(m_joystick.getRawButton(Constants.Joystick.TRIANGLE_BUTTON)) {
       m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Lift +" );
     }
-    if(m_joystick.getRawButton(Constants.Joystick.BOTTOMLEFT)) {
+    if(m_joystick.getRawButton(Constants.Joystick.TOP_DIR)) {
       m_arm.incrementTilt(Constants.Arm.SERVO_INCREMENT);
-      System.out.println("Lift " );
+      System.out.println("Tilt +" );
     }
-    if(m_joystick.getRawButton(Constants.Joystick.BOTTOMRIGHT)) {
+    if(m_joystick.getRawButton(Constants.Joystick.LEFT_DIR)) {
       m_arm.incrementTilt(-Constants.Arm.SERVO_INCREMENT);
-      System.out.println("Tilt " );
+      System.out.println("Tilt -" );
     }
-    if(m_joystick.getRawButton(Constants.Joystick.Y)) {
+    if(m_joystick.getRawButton(Constants.Joystick.L2_BUTTON)) {
       m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Gripper +" );
     }
-    if(m_joystick.getRawButton(Constants.Joystick.B)) {
+    if(m_joystick.getRawButton(Constants.Joystick.R2_BUTTON)) {
       m_arm.incrementGripper(-Constants.Arm.SERVO_INCREMENT);
+      System.out.println("Gripper -" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.START)) {
+      System.out.println("START" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.A)) {
+      System.out.println("A" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.L2_BUTTON)) {
+      System.out.println("L2_BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.R2_BUTTON)) {
+      System.out.println("R2_BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.TRIANGLE_BUTTON)) {
+      System.out.println("TRIANGLE BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.CIRCLE_BUTTON)) {
+      System.out.println("CIRCLE BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.CROSS_BUTTON)) {
+      System.out.println("CROSS BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.SQUARE_BUTTON)) {
+      System.out.println("SQUARE BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.UNKNOWN_BUTTON)) {
+      System.out.println("UNKNOWN BUTTON" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.TOP_DIR)) {
+      System.out.println("TOP" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.BOTTOM_DIR)) {
+      System.out.println("BOTTOM" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.LEFT_DIR)) {
+      System.out.println("LEFT" );
+    }
+    if(m_joystick.getRawButton(Constants.Joystick.RIGHT_DIR)) {
+      System.out.println("RIGHT" );
     }
   }
 

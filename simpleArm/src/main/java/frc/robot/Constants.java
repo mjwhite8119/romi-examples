@@ -14,19 +14,24 @@ package frc.robot;
  */
 public final class Constants {
     public final class Joystick {
-        // Button mapping for a Logitech gamepad. 
-        public static final int X = 1;
+        // Button mapping for a PS3 gamepad. 
+        public static final int SELECT = 1;
         public static final int A = 2;
         public static final int B = 3;
-        public static final int Y = 4;
-        public static final int TOPLEFT = 5;
-        public static final int TOPRIGHT = 6;
-        public static final int BOTTOMLEFT = 7;
-        public static final int BOTTOMRIGHT = 8;
-        public static final int BACK = 9;
-        public static final int START = 10;
+        public static final int START = 4;
+        public static final int TOP_DIR = 5;
+        public static final int RIGHT_DIR = 6;
+        public static final int BOTTOM_DIR = 7;
+        public static final int LEFT_DIR = 8;
+        public static final int L2_BUTTON = 9;
+        public static final int R2_BUTTON = 10;
         public static final int LEFT_ANALOG = 11;
         public static final int RIGHT_ANALOG = 12;
+        public static final int TRIANGLE_BUTTON = 13;
+        public static final int CIRCLE_BUTTON = 14;
+        public static final int CROSS_BUTTON = 15;
+        public static final int SQUARE_BUTTON = 16;
+        public static final int UNKNOWN_BUTTON = 17;
     }
 
     public final class Arm {
