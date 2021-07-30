@@ -57,7 +57,7 @@ public final class Constants {
         public static final double TILT_MIN = 0.333;
         public static final double TILT_MAX = 0.722;
         public static final double GRIPPER_MIN = 0.0;
-        public static final double GRIPPER_MAX = 1.0;
+        public static final double GRIPPER_MAX = 0.86;
 
         // Incremental amount of change for each button press
         // or during the periodic check while holding the button down

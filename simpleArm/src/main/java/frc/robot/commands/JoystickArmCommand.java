@@ -39,7 +39,7 @@ public class JoystickArmCommand extends CommandBase {
   @Override
   public void execute() {
     if(System.currentTimeMillis() - m_startTime > 500 ) {
-      System.out.println("Gripper Pos " + m_arm.getGripperPos());
+      // System.out.println("Gripper Pos " + m_arm.getGripperFeedbackPos());
       m_startTime = System.currentTimeMillis();
     }
 
@@ -61,12 +61,13 @@ public class JoystickArmCommand extends CommandBase {
     }
     if(m_joystick.getRawButton(Constants.Joystick.L2_BUTTON)) {
       m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT);
-      System.out.println("Gripper +" );
+      System.out.println("Gripper Pos + " + m_arm.getGripperFeedbackPos());
     }
     if(m_joystick.getRawButton(Constants.Joystick.R2_BUTTON)) {
       m_arm.incrementGripper(-Constants.Arm.SERVO_INCREMENT);
-      System.out.println("Gripper -" );
+      System.out.println("Gripper Pos - " + m_arm.getGripperFeedbackPos());
     }
+    /*
     if(m_joystick.getRawButton(Constants.Joystick.START)) {
       System.out.println("START" );
     }
@@ -106,6 +107,7 @@ public class JoystickArmCommand extends CommandBase {
     if(m_joystick.getRawButton(Constants.Joystick.RIGHT_DIR)) {
       System.out.println("RIGHT" );
     }
+    */
   }
 
 

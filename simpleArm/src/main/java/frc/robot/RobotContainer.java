@@ -16,7 +16,8 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.PositionArm;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -67,6 +68,12 @@ public class RobotContainer {
     () -> -m_controller.getRawAxis(1),
     () -> m_controller.getRawAxis(2)
     ));
+
+    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 1));
+
+    new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 0));  
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));

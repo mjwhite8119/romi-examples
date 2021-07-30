@@ -8,6 +8,8 @@ import json
 import time
 import sys
 
+import main
+
 from cscore import CameraServer, VideoSource, UsbCamera, MjpegServer
 from networktables import NetworkTablesInstance
 
@@ -232,16 +234,20 @@ if __name__ == "__main__":
         startSwitchedCamera(config)
 
     # loop forever
-    while True:
-        time, input_img = cvSink.grabFrame(input_img)
+    cv_sink = CameraServer.getInstance().getVideo(camera=cameras[0])
 
-        if time == 0: # There is an error
-            output.notifyError(sink.getError()) 
-            continue
+    main.start_process(cv_sink, ntinst)
 
-        # Process image code
-        processed_img = input_img
+    # while True:
+    #     time, input_img = cvSink.grabFrame(input_img)
+
+    #     if time == 0: # There is an error
+    #         output.notifyError(sink.getError()) 
+    #         continue
+
+    #     # Process image code
+    #     processed_img = input_img
 
         
-        output.putFrame(processed_img)    
-        # time.sleep(10)
+    #     output.putFrame(processed_img)    
+    #     # time.sleep(10)
