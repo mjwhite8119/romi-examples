@@ -15,7 +15,6 @@ import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
 
 import edu.wpi.first.vision.VisionPipeline;
-
 /**
 * LineFollowGripPipeline class.
 *
@@ -41,15 +40,15 @@ public class LineFollowGripPipeline implements VisionPipeline {
 	public void process(Mat source0) {
 		// Step Blur0:
 		Mat blurInput = source0;
-		BlurType blurType = BlurType.get("Gaussian Blur");
-		double blurRadius = 2.7027027027027026;
+		BlurType blurType = BlurType.get("Box Blur");
+		double blurRadius = 1.8018018018018007;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = blurOutput;
-		double[] hsvThresholdHue = {0.0, 100.5432937181664};
-		double[] hsvThresholdSaturation = {2.293165467625899, 200.88285229202037};
-		double[] hsvThresholdValue = {0.0, 255.0};
+		double[] hsvThresholdHue = {92.2661870503597, 126.5195246179966};
+		double[] hsvThresholdSaturation = {77.96762589928058, 255.0};
+		double[] hsvThresholdValue = {0.0, 146.76570458404075};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
@@ -59,8 +58,8 @@ public class LineFollowGripPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 0.0;
-		double filterContoursMinPerimeter = 0;
+		double filterContoursMinArea = 6.0;
+		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0;
 		double filterContoursMaxWidth = 1000;
 		double filterContoursMinHeight = 0;

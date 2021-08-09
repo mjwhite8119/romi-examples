@@ -9,6 +9,7 @@ def build():
     """
     files = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith(".py")]
     files.sort()
+    files.append("runCamera")
 
     with tarfile.open("wpilib.tar.gz", "w:gz") as tar:
         for file in files:

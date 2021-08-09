@@ -430,6 +430,7 @@ public final class Main {
             }        
           }                 
         }
+        // Write data to Network Tables
         // numberEntry.setDouble(loopCtr);
         rectWidthEntry.setDouble(rectWidth);
         rectHeightEntry.setDouble(rectHeight);
@@ -440,7 +441,7 @@ public final class Main {
        
       visionThread.start();
 
-      // Send images to Shuffleboard
+      // Send processed images to Shuffleboard
       addTargeting = new Thread(() -> {
         CvSink cvSink = CameraServer.getInstance().getVideo(cameras.get(0));
         // Setup a CvSource. This will send images back to Shuffleboard

@@ -1,9 +1,18 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.opencv.core.*;
-import org.opencv.imgproc.*;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.HashMap;
 
-import edu.wpi.first.vision.VisionPipeline;
+import org.opencv.core.*;
+import org.opencv.core.Core.*;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.*;
+import org.opencv.objdetect.*;
 
 /**
 * GripPipeline class.
@@ -12,7 +21,7 @@ import edu.wpi.first.vision.VisionPipeline;
 *
 * @author GRIP
 */
-public class GripPipeline implements VisionPipeline {
+public class GripPipeline {
 
 	//Outputs
 	private Mat blurOutput = new Mat();
@@ -30,15 +39,15 @@ public class GripPipeline implements VisionPipeline {
 	public void process(Mat source0) {
 		// Step Blur0:
 		Mat blurInput = source0;
-		BlurType blurType = BlurType.get("Median Filter");
-		double blurRadius = 4.504504504504505;
+		BlurType blurType = BlurType.get("Box Blur");
+		double blurRadius = 1.8018018018018007;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = blurOutput;
-		double[] hsvThresholdHue = {30.755395683453237, 180.0};
-		double[] hsvThresholdSaturation = {4.586330935251798, 255.0};
-		double[] hsvThresholdValue = {6.879496402877698, 255.0};
+		double[] hsvThresholdHue = {0.0, 126.5195246179966};
+		double[] hsvThresholdSaturation = {29.81115107913669, 255.0};
+		double[] hsvThresholdValue = {0.0, 170.5772495755518};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
@@ -48,13 +57,13 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 370.0;
+		double filterContoursMinArea = 50.0;
 		double filterContoursMinPerimeter = 0;
 		double filterContoursMinWidth = 0.0;
-		double filterContoursMaxWidth = 1000;
-		double filterContoursMinHeight = 0;
+		double filterContoursMaxWidth = 50.0;
+		double filterContoursMinHeight = 50.0;
 		double filterContoursMaxHeight = 1000;
-		double[] filterContoursSolidity = {0, 100};
+		double[] filterContoursSolidity = {0.0, 100};
 		double filterContoursMaxVertices = 1000000;
 		double filterContoursMinVertices = 0;
 		double filterContoursMinRatio = 0;

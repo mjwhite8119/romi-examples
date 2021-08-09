@@ -45,7 +45,7 @@ public class Arm extends SubsystemBase {
   public void incrementTilt(double delta) {
     m_tiltPos = saturateLimit(m_tiltPos + delta, Constants.Arm.TILT_MIN, Constants.Arm.TILT_MAX);
     m_tilt.set(m_tiltPos);
-    System.out.println("Tilt " + m_tiltPos);
+    // System.out.println("Tilt " + m_tiltPos);
   }
 
   /**
@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
   public void incrementLift(double delta) {
     m_liftPos = saturateLimit(m_liftPos + delta,  Constants.Arm.LIFT_MIN,  Constants.Arm.LIFT_MAX); 
     m_lift.set(m_liftPos);
-    System.out.println("Lift " + m_liftPos);
+    // System.out.println("Lift " + m_liftPos);
   }
 
   /** 
@@ -67,7 +67,7 @@ public class Arm extends SubsystemBase {
   public void incrementGripper(double delta) {
     m_gripperPos = saturateLimit(m_gripperPos + delta,  Constants.Arm.GRIPPER_MIN,  Constants.Arm.GRIPPER_MAX); 
     m_gripper.set(m_gripperPos);
-    System.out.println("Gripper " + m_gripperPos);
+    // System.out.println("Gripper " + m_gripperPos);
   }
 
   // Get lift motor position 

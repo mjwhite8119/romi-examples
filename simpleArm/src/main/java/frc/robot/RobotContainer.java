@@ -13,11 +13,15 @@ import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.PositionArm;
+import frc.robot.commands.PIDLineFollow;
+import frc.robot.commands.FollowLinePIDCommand;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -26,8 +30,9 @@ import frc.robot.commands.PositionArm;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrain = new Drivetrain();
-  private final Arm m_arm = new Arm();
+  public static final Drivetrain m_drivetrain = new Drivetrain();
+  public final Arm m_arm = new Arm();
+  public static final Vision m_vision = new Vision();
 
   // Assumes a gamepad plugged into channnel 0
   private final Joystick m_controller = new Joystick(0);
@@ -61,19 +66,21 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
-
-    m_arm.setDefaultCommand( new JoystickArmCommand(m_arm, m_controller));
-
     m_drivetrain.setDefaultCommand( new ArcadeDrive(m_drivetrain,
     () -> -m_controller.getRawAxis(1),
     () -> m_controller.getRawAxis(2)
     ));
 
-    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
-      .whenPressed(new PositionArm(m_arm, 1));
+    // Follow the line using home made PID controller
+    new JoystickButton(m_controller, Constants.Joystick.START)
+      .whenPressed(new PIDLineFollow(m_drivetrain, m_vision));  
 
-    new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
-      .whenPressed(new PositionArm(m_arm, 0));  
+    // Follow line using WpiLib PIDCommand and controller
+    new JoystickButton(m_controller, Constants.Joystick.SELECT)
+      .whenPressed(new FollowLinePIDCommand());    
+
+    // Configure the buttons to move the Romi Arm
+    // configureArmBindings();
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
@@ -81,6 +88,15 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
   }
 
+  public void configureArmBindings() {
+    m_arm.setDefaultCommand( new JoystickArmCommand(m_arm, m_controller));
+
+    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 1));
+
+    new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 0));  
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

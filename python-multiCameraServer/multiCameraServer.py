@@ -55,6 +55,24 @@ from networktables import NetworkTablesInstance
 #   }
 
 configFile = "/boot/frc.json"
+# {
+#     "cameras": [
+#         {
+#             "fps": 30,
+#             "height": 120,
+#             "name": "rPi Camera 0",
+#             "path": "/dev/video0",
+#             "pixel format": "mjpeg",
+#             "stream": {
+#                 "properties": []
+#             },
+#             "width": 160
+#         }
+#     ],
+#     "ntmode": "client",
+#     "switched cameras": [],
+#     "team": 2928
+# }
 
 class CameraConfig: pass
 
@@ -233,21 +251,12 @@ if __name__ == "__main__":
     for config in switchedCameraConfigs:
         startSwitchedCamera(config)
 
-    # loop forever
+    # Program is acting as the sink for images coming from the camera
     cv_sink = CameraServer.getInstance().getVideo(camera=cameras[0])
 
-    main.start_process(cv_sink, ntinst)
+    # Setup a CvSource. This will send images back to Shuffleboard
+    imageWidth = cameras[0].getVideoMode().width
+    imageHeight = cameras[0].getVideoMode().height
+    outputStream = CameraServer.getInstance().putVideo("Target", imageWidth, imageHeight);
 
-    # while True:
-    #     time, input_img = cvSink.grabFrame(input_img)
-
-    #     if time == 0: # There is an error
-    #         output.notifyError(sink.getError()) 
-    #         continue
-
-    #     # Process image code
-    #     processed_img = input_img
-
-        
-    #     output.putFrame(processed_img)    
-    #     # time.sleep(10)
+    main.start_process(cv_sink, ntinst, outputStream, imageWidth, imageHeight)
