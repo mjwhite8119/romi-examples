@@ -33,7 +33,7 @@ public final class Constants {
         public static final int SQUARE_BUTTON = 16;
         public static final int UNKNOWN_BUTTON = 17;
     }
-    
+
     public static final class Drive {
         public static final int LEFT_MOTOR_PORT = 7;
         public static final int RIGHT_MOTOR_PORT = 6;
@@ -55,8 +55,6 @@ public final class Constants {
     }
 
     public static final class Vision {
-        public static final int TOO_CLOSE = 10;
-        public static final int FAR_ENOUGH = 200;
         public static final int END_OF_LINE = 10;
         public static final int SETPOINT = 75;
     }
