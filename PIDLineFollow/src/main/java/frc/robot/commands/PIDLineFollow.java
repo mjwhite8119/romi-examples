@@ -20,15 +20,6 @@ public class PIDLineFollow extends CommandBase {
         m_drive = drive;
         m_vision = vision;
         addRequirements(drive);
-        // super(
-        //     new PIDController(Constants.Drive.P, 0, 0), 
-        //     RobotContainer.m_vision::getCenterX, 
-        //     320,
-        //     RobotContainer.m_drivetrain::steer,
-        //     RobotContainer.m_drivetrain
-        // );
-        // drive = RobotContainer.m_drivetrain;
-        // vision = RobotContainer.m_vision;
     }
 
     // Called when the command is initially scheduled.

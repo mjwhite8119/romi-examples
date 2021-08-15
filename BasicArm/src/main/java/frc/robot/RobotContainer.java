@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 // New components added to this project.
-import frc.robot.subsystems.Vision;
-import frc.robot.commands.PIDLineFollow;
-import frc.robot.commands.LineFollowPIDCommand;
+import frc.robot.subsystems.Arm;
+import frc.robot.commands.PositionArm;
+import frc.robot.commands.JoystickArm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,9 +33,9 @@ import frc.robot.commands.LineFollowPIDCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public static final Drivetrain m_drivetrain = new Drivetrain();
+  private final Drivetrain m_drivetrain = new Drivetrain();
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
-  public static final Vision m_vision = new Vision();
+  public final Arm m_arm = new Arm();
 
   // Assumes a gamepad plugged into channnel 0
   private final Joystick m_controller = new Joystick(0);
@@ -77,18 +77,23 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Follow the line using home made PID controller
-    new JoystickButton(m_controller, Constants.Joystick.START)
-      .whenPressed(new PIDLineFollow(m_drivetrain, m_vision));  
-
-    // Follow line using WpiLib PIDCommand and controller
-    new JoystickButton(m_controller, Constants.Joystick.SELECT)
-      .whenPressed(new LineFollowPIDCommand());    
-      
+    // Setup bindings to control the arm
+    configureArmBindings();
+    
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
+  }
+
+  public void configureArmBindings() {
+    m_arm.setDefaultCommand( new JoystickArm(m_arm, m_controller));
+
+    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 1));
+
+    new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 0));  
   }
 
   /**
