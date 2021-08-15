@@ -46,14 +46,6 @@ public class Drivetrain extends SubsystemBase {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
-  public void steer(double heading) {
-    arcadeDrive(.5, heading);
-  }
-
-  public void stop() {
-    arcadeDrive(0, 0);
-  }
-
   public void resetEncoders() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
