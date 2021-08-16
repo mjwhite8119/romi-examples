@@ -88,7 +88,7 @@ public final class Constants {
     public static final class Vision {
         public static final int TOO_CLOSE = 10;
         public static final int FAR_ENOUGH = 200;
-        public static final int END_OF_LINE = 10;
+        public static final int END_OF_LINE = 20;
         public static final int SETPOINT = 75;
     }
 }

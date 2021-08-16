@@ -77,20 +77,28 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Follow the line using home made PID controller
-    new JoystickButton(m_controller, Constants.Joystick.START)
-      .whenPressed(new PIDLineFollow(m_drivetrain, m_vision));  
+    // Setup the commands for line following
+    configureLineFollowing();
 
-    // Follow line using WpiLib PIDCommand and controller
-    new JoystickButton(m_controller, Constants.Joystick.SELECT)
-      .whenPressed(new LineFollowPIDCommand());    
-      
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 
+  private void configureLineFollowing() {
+    // Follow the line using home made PID controller
+    new JoystickButton(m_controller, Constants.Joystick.START)
+      .whenPressed(new PIDLineFollow(m_drivetrain, m_vision));  
+
+    // Follow line using WpiLib PIDCommand and controller
+    new JoystickButton(m_controller, Constants.Joystick.SELECT)
+      .whenPressed(new LineFollowPIDCommand());  
+      
+    // Add commands to Shuffleboard
+    SmartDashboard.putData("Custom Line Follow", new PIDLineFollow(m_drivetrain, m_vision));  
+    SmartDashboard.putData("WPI Line Follow", new LineFollowPIDCommand());   
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

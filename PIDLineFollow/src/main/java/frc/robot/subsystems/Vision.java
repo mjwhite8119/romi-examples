@@ -33,11 +33,6 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         // Data from Python 
-        String[] data = visionEntry.getString("-1 -1").split(" ");
-        centerX = Integer.parseInt(data[0]);
-        width = Integer.parseInt(data[1]);
-
-        // Data from Java
         centerX = (int)centerEntry.getDouble(0.0);
         rectWidth = (int)rectWidthEntry.getDouble(0.0);
         rectHeight = (int)rectHeightEntry.getDouble(0.0);
@@ -46,9 +41,6 @@ public class Vision extends SubsystemBase {
         SmartDashboard.putNumber("Rect Width", rectWidth);
         SmartDashboard.putNumber("Rect Height", rectHeight);
         SmartDashboard.putNumber("Rect Area", rectHeight * rectWidth);
-
-        // SmartDashboard.putNumber("Width", width);
-        // System.out.println("X Center " + centerX);
     }
 
     public int getWidth() {
