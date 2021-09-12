@@ -96,6 +96,11 @@ public class RobotContainer {
 
     new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
       .whenPressed(new PositionArm(m_arm, 0));  
+
+    // Add commands to Shuffleboard
+    SmartDashboard.putData("Move Arm UP", new PositionArm(m_arm, 1));  
+    SmartDashboard.putData("Move Arm DOWN", new PositionArm(m_arm, 0));
+      
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

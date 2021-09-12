@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
   public void incrementLift(double delta) {
     m_liftPos = saturateLimit(m_liftPos + delta,  Constants.Arm.LIFT_MIN,  Constants.Arm.LIFT_MAX); 
     m_lift.set(m_liftPos);
-    // System.out.println("Lift " + m_liftPos);
+    System.out.println("Arm Subsytem Lift " + m_liftPos);
   }
 
   /** 

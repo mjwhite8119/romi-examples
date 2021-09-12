@@ -53,7 +53,9 @@ public final class Constants {
         // Tilt range 1200 - 1900 -> .333 - .722
         // Gripper range 500 - 2400 -> 0 - 1
         public static final double LIFT_MIN = 0.222;
+        // public static final double LIFT_MIN = 0.550;
         public static final double LIFT_MAX = 0.722;
+        // public static final double TILT_MIN = 0.697;
         public static final double TILT_MIN = 0.333;
         public static final double TILT_MAX = 0.722;
         public static final double GRIPPER_MIN = 0.0;

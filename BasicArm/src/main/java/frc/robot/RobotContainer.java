@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 // New components added to this project.
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.PositionArm;
+import frc.robot.commands.PositionLift;
+import frc.robot.commands.PositionTilt;
 import frc.robot.commands.JoystickArm;
 
 /**
@@ -89,9 +91,23 @@ public class RobotContainer {
   public void configureArmBindings() {
     m_arm.setDefaultCommand( new JoystickArm(m_arm, m_controller));
 
-    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
-      .whenPressed(new PositionArm(m_arm, 1));
+    // Tilt UP
+    new JoystickButton(m_controller, Constants.Joystick.START)
+      .whenPressed(new PositionTilt(m_arm, 1));
 
+    // Lift UP  
+    new JoystickButton(m_controller, Constants.Joystick.SELECT)
+      .whenPressed(new PositionLift(m_arm, 1));  
+
+    // Lift DOWN
+    new JoystickButton(m_controller, Constants.Joystick.BOTTOM_DIR)
+      .whenPressed(new PositionLift(m_arm, 0));  
+
+    // Move Arm UP
+    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
+      .whenPressed(new PositionArm(m_arm, 1));  
+
+    // Move Arm DOWN
     new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
       .whenPressed(new PositionArm(m_arm, 0)); 
       
@@ -116,6 +132,6 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(2));
+        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(0));
   }
 }
