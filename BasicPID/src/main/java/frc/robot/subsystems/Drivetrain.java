@@ -46,6 +46,14 @@ public class Drivetrain extends SubsystemBase {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
+  public void steer(double rotate) {
+    arcadeDrive(.5, rotate);
+  }
+
+  public void turn(double rotate) {
+    arcadeDrive(.5, rotate * 0.5);
+  }
+
   public void resetEncoders() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
@@ -123,6 +131,10 @@ public class Drivetrain extends SubsystemBase {
    */
   public double getGyroAngleZ() {
     return m_gyro.getAngleZ();
+  }
+
+  public double getHeading() {
+    return getGyroAngleZ();
   }
 
   /** Reset the gyro. */
