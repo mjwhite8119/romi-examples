@@ -4,10 +4,16 @@
 
 package frc.robot.subsystems;
 
+import org.opencv.core.RotatedRect;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,15 +40,28 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
+  // Used to get data input from Shuffleboard
+  private NetworkTableEntry m_distance;
+  
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
     m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     resetEncoders();
+    resetGyro();
+
+    // Place PID values on Shuffleboard
+    SmartDashboard.putNumber("Setpoint", 0);
+    SmartDashboard.putNumber("P", 0.1);
+    SmartDashboard.putNumber("D", 0.0);
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    // if (zaxisRotate != 0) {
+    //   System.out.println("zaxis rotate " + zaxisRotate);
+    // }  
+    SmartDashboard.putNumber("zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
@@ -51,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void turn(double rotate) {
-    arcadeDrive(.5, rotate * 0.5);
+    arcadeDrive(0, rotate);
   }
 
   public void resetEncoders() {
@@ -134,7 +153,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getHeading() {
-    return getGyroAngleZ();
+    double angle = getGyroAngleZ();
+    double rotations = Math.round(angle/180);
+    double heading = angle - (rotations*180);
+    // SmartDashboard.putNumber("Rotations", rotations);
+    // return getGyroAngleZ();
+    return heading;
   }
 
   /** Reset the gyro. */
@@ -145,5 +169,14 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Current Heading", getHeading());
+    SmartDashboard.putNumber("Angle", getGyroAngleZ());
+    double rotations = Math.round(getGyroAngleZ()/180);
+    SmartDashboard.putNumber("Rotations", rotations);
+
+    double returnedSetpoint = SmartDashboard.getNumber("Setpoint", 0);
+    SmartDashboard.putNumber("RS", returnedSetpoint);
+    double returnedP = SmartDashboard.getNumber("P", 0);
+    SmartDashboard.putNumber("RP", returnedP);
   }
 }

@@ -4,13 +4,19 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -36,6 +42,9 @@ public class RobotContainer {
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+  // Used to get data input from Shuffleboard
+  private NetworkTableEntry m_distance;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -71,6 +80,15 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
+    // Setup Shuffleboard input
+    m_distance = 
+      Shuffleboard.getTab("Drivetrain")
+        .add("Auto Distance", 5)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 20))
+        .withPosition(3, 4)
+        .getEntry();
+
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
@@ -78,8 +96,10 @@ public class RobotContainer {
 
     // Test the PID commands
     SmartDashboard.putData("Heading 0 deg", new TurnToAngle(0, m_drivetrain));
-    SmartDashboard.putData("Heading 45 deg", new TurnToAngle(45, m_drivetrain));
+    SmartDashboard.putData("Profiled Heading", new TurnToAngleProfiled(0, m_drivetrain));
 
+    // SmartDashboard.putData("Heading 90 deg", new TurnToAngle(90, m_drivetrain));
+    // SmartDashboard.putData("Heading 180 deg", new TurnToAngle(180, m_drivetrain));
   }
 
   /**

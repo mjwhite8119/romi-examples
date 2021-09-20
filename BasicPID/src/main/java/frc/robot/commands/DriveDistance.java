@@ -5,12 +5,16 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveDistance extends CommandBase {
   private final Drivetrain m_drive;
-  private final double m_distance;
+  private double m_distance;
   private final double m_speed;
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
 
   /**
    * Creates a new DriveDistance. This command will drive your your robot for a desired distance at
@@ -32,6 +36,9 @@ public class DriveDistance extends CommandBase {
   public void initialize() {
     m_drive.arcadeDrive(0, 0);
     m_drive.resetEncoders();
+
+    // Override distance here from Shuffleboard/Network Tables
+    m_distance = table.getEntry("Auto Distance").getDouble(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
