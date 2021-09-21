@@ -6,13 +6,16 @@ package frc.robot.subsystems;
 
 import org.opencv.core.RotatedRect;
 
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,9 +43,14 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
-  // Used to get data input from Shuffleboard
-  private NetworkTableEntry m_distance;
-  
+  // Used to put data onto Shuffleboard
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+  private NetworkTableEntry m_heading = 
+    driveTab.add("Current Heading", 0)
+      .withPosition(5, 3)
+      .withWidget(BuiltInWidgets.kGraph)
+      .getEntry();
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
@@ -51,16 +59,10 @@ public class Drivetrain extends SubsystemBase {
     resetEncoders();
     resetGyro();
 
-    // Place PID values on Shuffleboard
-    SmartDashboard.putNumber("Setpoint", 0);
-    SmartDashboard.putNumber("P", 0.1);
-    SmartDashboard.putNumber("D", 0.0);
+    
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
-    // if (zaxisRotate != 0) {
-    //   System.out.println("zaxis rotate " + zaxisRotate);
-    // }  
     SmartDashboard.putNumber("zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
@@ -156,8 +158,6 @@ public class Drivetrain extends SubsystemBase {
     double angle = getGyroAngleZ();
     double rotations = Math.round(angle/180);
     double heading = angle - (rotations*180);
-    // SmartDashboard.putNumber("Rotations", rotations);
-    // return getGyroAngleZ();
     return heading;
   }
 
@@ -169,14 +169,17 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Current Heading", getHeading());
-    SmartDashboard.putNumber("Angle", getGyroAngleZ());
-    double rotations = Math.round(getGyroAngleZ()/180);
-    SmartDashboard.putNumber("Rotations", rotations);
+    m_heading.setDouble(getHeading());
+    
+    // SmartDashboard.putNumber("Current Heading", getHeading());
+    
+    // SmartDashboard.putNumber("Angle", getGyroAngleZ());
+    // double rotations = Math.round(getGyroAngleZ()/180);
+    // SmartDashboard.putNumber("Rotations", rotations);
 
-    double returnedSetpoint = SmartDashboard.getNumber("Setpoint", 0);
-    SmartDashboard.putNumber("RS", returnedSetpoint);
-    double returnedP = SmartDashboard.getNumber("P", 0);
-    SmartDashboard.putNumber("RP", returnedP);
+    // double returnedSetpoint = SmartDashboard.getNumber("Setpoint", 0);
+    // SmartDashboard.putNumber("RS", returnedSetpoint);
+    // double returnedP = SmartDashboard.getNumber("P", 0);
+    // SmartDashboard.putNumber("RP", returnedP);
   }
 }

@@ -9,24 +9,29 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TurnToAngle extends PIDCommand {
   /** Creates a new TurnToAngle. */
+  private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
+
   public TurnToAngle(double targetAngleDegrees, Drivetrain drive) {
     super(
         // The controller that the command will use
         // new PIDController(DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD),
 
-        new PIDController(SmartDashboard.getNumber("P", 1.0), 
+        new PIDController(table.getEntry("P").getDouble(1), 
                           DriveConstants.kTurnI, 
-                          SmartDashboard.getNumber("D", 0.0)),
+                          table.getEntry("D").getDouble(0)),
         // This should return the measurement
         drive::getHeading,
         // This should return the setpoint (can also be a constant)
-        () -> SmartDashboard.getNumber("Setpoint", 0),
+        table.getEntry("Heading Angle").getDouble(0),
         // targetAngleDegrees,
         // This uses the output
         output -> {
@@ -47,7 +52,9 @@ public class TurnToAngle extends PIDCommand {
   public void execute() {
     // TODO Auto-generated method stub
     super.execute();
-    SmartDashboard.putNumber("Setpoint ", getController().getSetpoint());
+    SmartDashboard.putNumber("Setpoint", getController().getSetpoint());
+    SmartDashboard.putNumber("Got P", getController().getP());
+    SmartDashboard.putNumber("Got D", getController().getD());
   }
 
   // Returns true when the command should end.

@@ -46,6 +46,9 @@ public class RobotContainer {
 
   // Used to get data input from Shuffleboard
   private NetworkTableEntry m_distance;
+  private NetworkTableEntry m_angle;
+  private NetworkTableEntry m_kP;
+  private NetworkTableEntry m_kD;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -91,7 +94,19 @@ public class RobotContainer {
         .getEntry();
 
     driveTab.add(m_drivetrain)
-      .withPosition(3, 0);
+      .withPosition(0, 0);
+
+    m_angle = driveTab.add("Heading Angle", 0)
+      .withPosition(3, 0)
+      .getEntry();  
+
+    m_kP = driveTab.add("P", 1.0)
+      .withPosition(3, 1)
+      .getEntry();  
+
+    m_kD = driveTab.add("D", 0.0)
+      .withPosition(3, 2)
+      .getEntry();  
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
@@ -99,7 +114,7 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     // Test the PID commands
-    SmartDashboard.putData("Heading 0 deg", new TurnToAngle(0, m_drivetrain));
+    SmartDashboard.putData("Heading", new TurnToAngle(0, m_drivetrain));
     SmartDashboard.putData("Profiled Heading", new TurnToAngleProfiled(0, m_drivetrain));
 
     // SmartDashboard.putData("Heading 90 deg", new TurnToAngle(90, m_drivetrain));
