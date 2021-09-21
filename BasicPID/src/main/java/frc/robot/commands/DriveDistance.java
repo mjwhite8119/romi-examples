@@ -6,6 +6,12 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+import java.util.Map;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -29,6 +35,13 @@ public class DriveDistance extends CommandBase {
     m_speed = speed;
     m_drive = drive;
     addRequirements(drive);
+    
+    // ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+    // m_distance = driveTab.add("Auto Distance", 5)
+    //     .withWidget(BuiltInWidgets.kNumberSlider)
+    //     .withProperties(Map.of("min", 0, "max", 20))
+    //     .withPosition(3, 3)
+    //     .getEntry().getDouble(0);
   }
 
   // Called when the command is initially scheduled.
@@ -39,6 +52,7 @@ public class DriveDistance extends CommandBase {
 
     // Override distance here from Shuffleboard/Network Tables
     m_distance = table.getEntry("Auto Distance").getDouble(0);
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.

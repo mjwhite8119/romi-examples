@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
@@ -81,13 +82,16 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup Shuffleboard input
-    m_distance = 
-      Shuffleboard.getTab("Drivetrain")
-        .add("Auto Distance", 5)
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+
+    m_distance = driveTab.add("Auto Distance", 5)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 20))
-        .withPosition(3, 4)
+        .withPosition(3, 3)
         .getEntry();
+
+    driveTab.add(m_drivetrain)
+      .withPosition(3, 0);
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
