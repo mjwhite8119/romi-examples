@@ -19,11 +19,11 @@ public class TurnToAngleProfiled extends ProfiledPIDCommand {
   public TurnToAngleProfiled(double targetAngleDegrees, Drivetrain drive) {
     super(
         // The ProfiledPIDController used by the command
-        new ProfiledPIDController(SmartDashboard.getNumber("P", 1.0), 
+        new ProfiledPIDController(DriveConstants.kTurnP, 
                                   DriveConstants.kTurnI, 
-                                  SmartDashboard.getNumber("D", 0.0),
-        // The motion profile constraints
-        new TrapezoidProfile.Constraints(0, 0)),
+                                  DriveConstants.kTurnD,
+          // The motion profile constraints
+          new TrapezoidProfile.Constraints(0, 0)),
 
         // This should return the measurement
         drive::getHeading,
@@ -41,7 +41,7 @@ public class TurnToAngleProfiled extends ProfiledPIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.getController().enableContinuousInput(-180, 180);
     getController().setTolerance(DriveConstants.kTurnToleranceDeg,
-    DriveConstants.kTurnRateToleranceDegPerS);
+                                DriveConstants.kTurnRateToleranceDegPerS);
 
   }
 
