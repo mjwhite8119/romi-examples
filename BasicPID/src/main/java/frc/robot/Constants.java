@@ -14,6 +14,15 @@ package frc.robot;
  */
 public final class Constants {
     public final class DriveConstants {
+        // For distances
+        public static final double kDistanceP = 1;
+        public static final double kDistanceI = 0;
+        public static final double kDistanceD = 0;
+
+        public static final double kDistanceToleranceInch = 0.5;
+        public static final double kVelocityToleranceInchPerS = 5;
+
+        // For turns
         public static final double kTurnP = 1;
         public static final double kTurnI = 0;
         public static final double kTurnD = 0;

@@ -67,8 +67,8 @@ public class Drivetrain extends SubsystemBase {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
-  public void steer(double rotate) {
-    arcadeDrive(.5, rotate);
+  public void steer(double speed) {
+    arcadeDrive(speed, 0);
   }
 
   public void turn(double rotate) {
