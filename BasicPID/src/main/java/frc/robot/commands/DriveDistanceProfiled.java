@@ -30,7 +30,7 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
             DriveConstants.kDistanceI, 
             DriveConstants.kDistanceD,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(1.5, 2.0)),
+            new TrapezoidProfile.Constraints(0.15, 2.0)),
         // This should return the measurement
         drive::getAverageDistanceInch,
         // This should return the goal (can also be a constant)
@@ -51,7 +51,7 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setGoal(new TrapezoidProfile.State(table.getEntry("Distance").getDouble(0.0),0));
+    getController().setGoal(table.getEntry("Distance").getDouble(0.0));
     getController().setP(table.getEntry("distanceP").getDouble(1.0));
     getController().setD(table.getEntry("distanceD").getDouble(0.0));
   }
@@ -66,6 +66,6 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    return getController().atGoal();
   }
 }
