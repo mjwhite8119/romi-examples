@@ -15,12 +15,12 @@ import edu.wpi.first.networktables.NetworkTable;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurnToAngle extends PIDCommand {
+public class TurnDegreesPID extends PIDCommand {
   /** Creates a new TurnToAngle. */
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
 
-  public TurnToAngle(double targetAngleDegrees, Drivetrain drive) {
+  public TurnDegreesPID(double targetAngleDegrees, Drivetrain drive) {
     super(
         // The controller that the command will use
         new PIDController(DriveConstants.kTurnP, 

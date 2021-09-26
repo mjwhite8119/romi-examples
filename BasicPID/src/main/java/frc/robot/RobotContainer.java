@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
-import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.TurnToAngleProfiled;
+import frc.robot.commands.TurnDegreesPID;
+import frc.robot.commands.TurnDegreesProfiled;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -122,8 +122,8 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     // Test the PID commands
-    SmartDashboard.putData("Heading", new TurnToAngle(0, m_drivetrain));
-    SmartDashboard.putData("Profiled Heading", new TurnToAngleProfiled(0, m_drivetrain));
+    SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
+    SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
 
     // SmartDashboard.putData("Heading 90 deg", new TurnToAngle(90, m_drivetrain));
     // SmartDashboard.putData("Heading 180 deg", new TurnToAngle(180, m_drivetrain));
