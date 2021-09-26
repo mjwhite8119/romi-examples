@@ -90,13 +90,16 @@ public class RobotContainer {
     // Setup Shuffleboard input
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
+    driveTab.add(m_drivetrain)
+      .withPosition(6, 0);
+
     m_distance = driveTab.add("Distance", 5)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 20))
         .withPosition(3, 0)
         .getEntry();
 
-    m_distanceP = driveTab.add("distanceP", 1.0)
+    m_distanceP = driveTab.add("distanceP", 0.5)
       .withPosition(3, 1)
       .getEntry();  
 
@@ -124,9 +127,6 @@ public class RobotContainer {
     // Test the PID commands
     SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
     SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
-
-    // SmartDashboard.putData("Heading 90 deg", new TurnToAngle(90, m_drivetrain));
-    // SmartDashboard.putData("Heading 180 deg", new TurnToAngle(180, m_drivetrain));
   }
 
   /**

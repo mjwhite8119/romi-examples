@@ -4,35 +4,40 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DriveDistancePID extends PIDCommand {
-  /** Creates a new DriveDistancePID. */
+public class DriveDistanceProfiled extends ProfiledPIDCommand {
+  /** Creates a new DriveDistanceProfiled. */
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
   
-  public DriveDistancePID(double targetDistance, Drivetrain drive) {
+  public DriveDistanceProfiled(double targetDistance, Drivetrain drive) {
     super(
-        // The controller that the command will use
-        new PIDController(DriveConstants.kDistanceP, 
-                          DriveConstants.kDistanceI, 
-                          DriveConstants.kDistanceD),
+        // The ProfiledPIDController used by the command
+        new ProfiledPIDController(
+            // The PID gains
+            DriveConstants.kDistanceP, 
+            DriveConstants.kDistanceI, 
+            DriveConstants.kDistanceD,
+            // The motion profile constraints
+            new TrapezoidProfile.Constraints(1.5, 2.0)),
         // This should return the measurement
         drive::getAverageDistanceInch,
-        // This should return the setpoint (can also be a constant)
-        targetDistance,
+        // This should return the goal (can also be a constant)
+        () -> new TrapezoidProfile.State(targetDistance,0),
         // This uses the output
-        output -> {
-          // Use the output here
+        (output, setpoint) -> {
+          // Use the output (and setpoint, if desired) here
           drive.steer(output/10);
         },
         // Use addRequirements() here to declare subsystem dependencies.
@@ -46,11 +51,10 @@ public class DriveDistancePID extends PIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setSetpoint(table.getEntry("Distance").getDouble(0.0));
+    getController().setGoal(new TrapezoidProfile.State(table.getEntry("Distance").getDouble(0.0),0));
     getController().setP(table.getEntry("distanceP").getDouble(1.0));
     getController().setD(table.getEntry("distanceD").getDouble(0.0));
   }
-  
 
   public void execute() {
     // TODO Auto-generated method stub
@@ -58,7 +62,7 @@ public class DriveDistancePID extends PIDCommand {
     SmartDashboard.putNumber("Error", getController().getPositionError());
     SmartDashboard.putBoolean("Finished", getController().atSetpoint());
   }
-
+  
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

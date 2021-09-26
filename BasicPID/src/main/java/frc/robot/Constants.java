@@ -19,8 +19,8 @@ public final class Constants {
         public static final double kDistanceI = 0;
         public static final double kDistanceD = 0;
 
-        public static final double kDistanceToleranceInch = 0.5;
-        public static final double kVelocityToleranceInchPerS = 5;
+        public static final double kDistanceToleranceInch = 3.0;
+        public static final double kVelocityToleranceInchPerS = 10;
 
         // For turns
         public static final double kTurnP = 1;

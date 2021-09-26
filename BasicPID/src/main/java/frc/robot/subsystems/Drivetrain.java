@@ -68,6 +68,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void steer(double speed) {
+    SmartDashboard.putNumber("speed", speed);
     arcadeDrive(speed, 0);
   }
 
