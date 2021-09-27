@@ -93,31 +93,32 @@ public class RobotContainer {
     driveTab.add(m_drivetrain)
       .withPosition(6, 0);
 
-    m_distance = driveTab.add("Distance", 5)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 20))
-        .withPosition(3, 0)
-        .getEntry();
+    // In meters  
+    m_distance = driveTab.add("Auto Distance Meters", 0.3)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 0, "max", 5))
+      .withPosition(3, 0)
+      .getEntry();
 
-    m_distanceP = driveTab.add("distanceP", 0.5)
+    m_distanceP = driveTab.add("kP", Constants.DriveConstants.kDistanceP)
       .withPosition(3, 1)
       .getEntry();  
 
-    m_distanceD = driveTab.add("distanceD", 0.0)
+    m_distanceD = driveTab.add("kD", Constants.DriveConstants.kDistanceD)
       .withPosition(3, 2)
       .getEntry();  
   
-    m_angle = driveTab.add("Heading Angle", 0)
-      .withPosition(5, 0)
-      .getEntry();  
+    // m_angle = driveTab.add("Heading Angle Degrees", 0)
+    //   .withPosition(5, 0)
+    //   .getEntry();  
 
-    m_angleP = driveTab.add("angleP", 1.0)
-      .withPosition(5, 1)
-      .getEntry();  
+    // m_angleP = driveTab.add("anglekP", 1.0)
+    //   .withPosition(5, 1)
+    //   .getEntry();  
 
-    m_angleD = driveTab.add("angleD", 0.0)
-      .withPosition(5, 2)
-      .getEntry();  
+    // m_angleD = driveTab.add("anglekD", 0.0)
+    //   .withPosition(5, 2)
+    //   .getEntry();  
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
@@ -125,8 +126,8 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     // Test the PID commands
-    SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
-    SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
+    // SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
+    // SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
   }
 
   /**

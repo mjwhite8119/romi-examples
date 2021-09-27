@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.networktables.NetworkTable;
@@ -30,9 +31,10 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
             DriveConstants.kDistanceI, 
             DriveConstants.kDistanceD,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(0.15, 2.0)),
+            new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxVelocityMeters,
+                                            Constants.DriveConstants.kMaxAcceMeters)),
         // This should return the measurement
-        drive::getAverageDistanceInch,
+        drive::getAverageDistanceMeters,
         // This should return the goal (can also be a constant)
         () -> new TrapezoidProfile.State(targetDistance,0),
         // This uses the output
@@ -44,22 +46,25 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
         drive);
     
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(DriveConstants.kDistanceToleranceInch,
-                                DriveConstants.kVelocityToleranceInchPerS);
+    getController().setTolerance(DriveConstants.kDistanceToleranceMeters,
+                                DriveConstants.kVelocityToleranceMetersPerS);
   }
 
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setGoal(table.getEntry("Distance").getDouble(0.0));
-    getController().setP(table.getEntry("distanceP").getDouble(1.0));
-    getController().setD(table.getEntry("distanceD").getDouble(0.0));
+    getController().setGoal(table.getEntry("Auto Distance Meters").getDouble(0.0));
+    getController().setP(table.getEntry("kP").getDouble(1.0));
+    getController().setD(table.getEntry("kD").getDouble(0.0));
   }
 
   public void execute() {
     // TODO Auto-generated method stub
     super.execute();
-    SmartDashboard.putNumber("Error", getController().getPositionError());
+    SmartDashboard.putNumber("goal", getController().getGoal().position);
+    SmartDashboard.putNumber("setpoint", getController().getSetpoint().position);
+    SmartDashboard.putNumber("Pos. Error", getController().getPositionError());
+    SmartDashboard.putNumber("Vel. Error", getController().getVelocityError());
     SmartDashboard.putBoolean("atSetpoint", getController().atSetpoint());
     SmartDashboard.putBoolean("atGoal", getController().atGoal());
   }

@@ -27,7 +27,7 @@ public class DriveDistancePID extends PIDCommand {
                           DriveConstants.kDistanceI, 
                           DriveConstants.kDistanceD),
         // This should return the measurement
-        drive::getAverageDistanceInch,
+        drive::getAverageDistanceMeters,
         // This should return the setpoint (can also be a constant)
         targetDistance,
         // This uses the output
@@ -39,8 +39,8 @@ public class DriveDistancePID extends PIDCommand {
         drive);
     
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(DriveConstants.kDistanceToleranceInch,
-                                DriveConstants.kVelocityToleranceInchPerS);
+    getController().setTolerance(DriveConstants.kDistanceToleranceMeters,
+                                DriveConstants.kVelocityToleranceMetersPerS);
   }
 
   public void initialize() {

@@ -56,13 +56,14 @@ public class TurnDegrees extends CommandBase {
        or 5.551 inches. We then take into consideration the width of the tires.
     */
     double inchPerDegree = Math.PI * 5.551 / 360;
+    double metersPerDegree = Math.PI * 0.141 / 360;
     // Compare distance travelled from start to distance based on degree turn
-    return getAverageTurningDistance() >= (inchPerDegree * m_degrees);
+    return getAverageTurningDistance() >= (metersPerDegree * m_degrees);
   }
 
   private double getAverageTurningDistance() {
-    double leftDistance = Math.abs(m_drive.getLeftDistanceInch());
-    double rightDistance = Math.abs(m_drive.getRightDistanceInch());
+    double leftDistance = Math.abs(m_drive.getLeftDistance());
+    double rightDistance = Math.abs(m_drive.getRightDistance());
     return (leftDistance + rightDistance) / 2.0;
   }
 }
