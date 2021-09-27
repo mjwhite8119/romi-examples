@@ -88,9 +88,9 @@ public class RobotContainer {
     // Setup Shuffleboard input
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
-    m_distance = driveTab.add("Auto Distance", 5)
+    m_distance = driveTab.add("Auto Distance", 0.5)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 0, "max", 20))
+      .withProperties(Map.of("min", 0, "max", 5))
       .withPosition(3, 0)
       .getEntry();
 

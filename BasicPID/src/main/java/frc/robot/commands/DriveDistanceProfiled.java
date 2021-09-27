@@ -38,7 +38,7 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
         // This uses the output
         (output, setpoint) -> {
           // Use the output (and setpoint, if desired) here
-          drive.steer(output/10);
+          drive.steer(output);
         },
         // Use addRequirements() here to declare subsystem dependencies.
         drive);
@@ -60,7 +60,8 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
     // TODO Auto-generated method stub
     super.execute();
     SmartDashboard.putNumber("Error", getController().getPositionError());
-    SmartDashboard.putBoolean("Finished", getController().atSetpoint());
+    SmartDashboard.putBoolean("atSetpoint", getController().atSetpoint());
+    SmartDashboard.putBoolean("atGoal", getController().atGoal());
   }
   
   // Returns true when the command should end.

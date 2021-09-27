@@ -8,12 +8,13 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.Constants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  private static final double kCountsPerRevolution = 1440.0;
-  private static final double kWheelDiameterInch = 2.75591; // 70 mm
+  // private static final double kCountsPerRevolution = 1440.0;
+  // private static final double kWheelDiameterInch = 2.75591; // 70 mm
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
@@ -37,8 +38,8 @@ public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
+    m_leftEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeters) / Constants.DriveConstants.kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeters) / Constants.DriveConstants.kCountsPerRevolution);
     resetEncoders();
   }
 
@@ -59,16 +60,16 @@ public class Drivetrain extends SubsystemBase {
     return m_rightEncoder.get();
   }
 
-  public double getLeftDistanceInch() {
+  public double getLeftDistance() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistanceInch() {
+  public double getRightDistance() {
     return m_rightEncoder.getDistance();
   }
 
   public double getAverageDistanceInch() {
-    return (getLeftDistanceInch() + getRightDistanceInch()) / 2.0;
+    return (getLeftDistance() + getRightDistance()) / 2.0;
   }
 
   /**

@@ -22,6 +22,12 @@ public final class Constants {
         public static final double kDistanceToleranceInch = 3.0;
         public static final double kVelocityToleranceInchPerS = 10;
 
+        public static final double kMaxVelocityInches = 10;
+        public static final double kMaxAccelInches = 10;
+
+        public static final double kMaxVelocityMeters = 0.15;
+        public static final double kMaxAcceMeters = 1.8;
+
         // For turns
         public static final double kTurnP = 1;
         public static final double kTurnI = 0;
