@@ -108,17 +108,17 @@ public class RobotContainer {
       .withPosition(3, 2)
       .getEntry();  
   
-    // m_angle = driveTab.add("Heading Angle Degrees", 0)
-    //   .withPosition(5, 0)
-    //   .getEntry();  
+    m_angle = driveTab.add("Heading Angle Degrees", 0)
+      .withPosition(5, 0)
+      .getEntry();  
 
-    // m_angleP = driveTab.add("anglekP", 1.0)
-    //   .withPosition(5, 1)
-    //   .getEntry();  
+    m_angleP = driveTab.add("anglekP", 1.0)
+      .withPosition(5, 1)
+      .getEntry();  
 
-    // m_angleD = driveTab.add("anglekD", 0.0)
-    //   .withPosition(5, 2)
-    //   .getEntry();  
+    m_angleD = driveTab.add("anglekD", 0.0)
+      .withPosition(5, 2)
+      .getEntry();  
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
