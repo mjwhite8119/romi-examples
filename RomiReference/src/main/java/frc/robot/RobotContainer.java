@@ -4,21 +4,12 @@
 
 package frc.robot;
 
-import java.util.Map;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousPIDDistance;
 import frc.robot.commands.AutonomousTime;
-import frc.robot.commands.TurnDegreesPID;
-import frc.robot.commands.TurnDegreesProfiled;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -44,15 +35,6 @@ public class RobotContainer {
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-
-  // Used to get data input from Shuffleboard
-  private NetworkTableEntry m_distance;
-  private NetworkTableEntry m_distanceP;
-  private NetworkTableEntry m_distanceD;
-
-  private NetworkTableEntry m_angle;
-  private NetworkTableEntry m_angleP;
-  private NetworkTableEntry m_angleD;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -88,47 +70,10 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Setup Shuffleboard input
-    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-
-    driveTab.add(m_drivetrain)
-      .withPosition(6, 0);
-
-    // In meters  
-    m_distance = driveTab.add("Auto Distance Meters", 0.3)
-      .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 0, "max", 5))
-      .withPosition(3, 0)
-      .getEntry();
-
-    m_distanceP = driveTab.add("kP", Constants.DriveConstants.kDistanceP)
-      .withPosition(3, 1)
-      .getEntry();  
-
-    m_distanceD = driveTab.add("kD", Constants.DriveConstants.kDistanceD)
-      .withPosition(3, 2)
-      .getEntry();  
-  
-    m_angle = driveTab.add("Heading Angle Degrees", 0)
-      .withPosition(4, 0)
-      .getEntry();  
-
-    m_angleP = driveTab.add("anglekP", 0.5)
-      .withPosition(4, 1)
-      .getEntry();  
-
-    m_angleD = driveTab.add("anglekD", 0.0)
-      .withPosition(5, 2)
-      .getEntry();  
-
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousPIDDistance(m_drivetrain));
+    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
-
-    // Test the PID commands
-    // SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
-    // SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
   }
 
   /**

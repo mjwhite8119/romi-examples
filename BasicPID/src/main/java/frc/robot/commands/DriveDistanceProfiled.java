@@ -56,11 +56,13 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
     getController().setGoal(table.getEntry("Auto Distance Meters").getDouble(0.0));
     getController().setP(table.getEntry("kP").getDouble(1.0));
     getController().setD(table.getEntry("kD").getDouble(0.0));
+    System.out.println("Starting distance");
   }
 
   public void execute() {
     // TODO Auto-generated method stub
     super.execute();
+    // SmartDashboard.putData("Distance PID", getController());
     SmartDashboard.putNumber("goal", getController().getGoal().position);
     SmartDashboard.putNumber("setpoint", getController().getSetpoint().position);
     SmartDashboard.putNumber("Pos. Error", getController().getPositionError());

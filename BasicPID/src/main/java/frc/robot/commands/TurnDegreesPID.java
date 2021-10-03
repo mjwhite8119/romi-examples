@@ -42,7 +42,7 @@ public class TurnDegreesPID extends PIDCommand {
         drive);
     
     // Configure additional PID options by calling `getController` here.
-    getController().enableContinuousInput(-180, 180);
+    // getController().enableContinuousInput(-180, 180);
     getController().setTolerance(DriveConstants.kTurnToleranceDeg,
                                 DriveConstants.kTurnRateToleranceDegPerS);
   }
@@ -50,18 +50,18 @@ public class TurnDegreesPID extends PIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setSetpoint(table.getEntry("Heading Angle").getDouble(0.0));
-    getController().setP(table.getEntry("P").getDouble(1.0));
-    getController().setD(table.getEntry("D").getDouble(0.0));
-
-    SmartDashboard.putNumber("Setpoint", getController().getSetpoint());
-    SmartDashboard.putNumber("Got P", getController().getP());
-    SmartDashboard.putNumber("Got D", getController().getD());
+    getController().setP(table.getEntry("anglekP").getDouble(1.0));
+    getController().setD(table.getEntry("anglekD").getDouble(0.0));
+    System.out.println("Starting turn");
   }
 
   public void execute() {
     // TODO Auto-generated method stub
     super.execute(); 
+    SmartDashboard.putNumber("(deg.) setpoint", getController().getSetpoint());
+    SmartDashboard.putNumber("(deg.) Pos. Error", getController().getPositionError());
+    SmartDashboard.putNumber("(deg.) Vel. Error", getController().getVelocityError());
+    SmartDashboard.putBoolean("(deg.) atSetpoint", getController().atSetpoint());
   }
 
   // Returns true when the command should end.
