@@ -30,8 +30,8 @@ public class TurnDegreesProfiled extends ProfiledPIDCommand {
                                   DriveConstants.kTurnI, 
                                   DriveConstants.kTurnD,
           // The motion profile constraints
-          new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxVelocityMeters,
-                                            Constants.DriveConstants.kMaxAcceMeters)),
+          new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxSpeedMetersPerSecond,
+                                            Constants.DriveConstants.kMaxAccelerationMetersPerSecondSquared)),
 
         // This should return the measurement
         drive::getHeading,

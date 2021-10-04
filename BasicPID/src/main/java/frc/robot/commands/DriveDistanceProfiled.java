@@ -31,8 +31,8 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
             DriveConstants.kDistanceI, 
             DriveConstants.kDistanceD,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxVelocityMeters,
-                                            Constants.DriveConstants.kMaxAcceMeters)),
+            new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxSpeedMetersPerSecond,
+                                            Constants.DriveConstants.kMaxAccelerationMetersPerSecondSquared)),
         // This should return the measurement
         drive::getAverageDistanceMeters,
         // This should return the goal (can also be a constant)
