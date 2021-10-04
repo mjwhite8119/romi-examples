@@ -101,14 +101,14 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(0.5, 0.25), // 1
-            new Translation2d(1.0, -0.5), // 2
-            new Translation2d(1.4, 0.5),  // 3
-            new Translation2d(2.5, 0.0),  // 4
-            new Translation2d(1.8, -0.25), // 5          
-            new Translation2d(1.4, 0.25),  // 6
-            new Translation2d(1.1, 0.1),   // 7
-            new Translation2d(0.75, -1.0)   // 8
+            new Translation2d(0.5, 0.25), // 1 Left
+            new Translation2d(1.0, -0.5), // 2 Right
+            new Translation2d(1.4, 0.5),  // 3 Left
+            new Translation2d(2.5, 0.0),  // 4 Center
+            new Translation2d(1.8, -0.25), // 5  Right        
+            new Translation2d(1.4, 0.25),  // 6 Left
+            new Translation2d(1.1, 0.1),   // 7 Left
+            new Translation2d(0.75, -1.0)   // 8 Right
         ),
         new Pose2d(-0.0, -0.30, new Rotation2d(Math.PI)),
         config);

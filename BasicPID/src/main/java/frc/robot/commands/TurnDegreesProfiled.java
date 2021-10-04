@@ -46,11 +46,12 @@ public class TurnDegreesProfiled extends ProfiledPIDCommand {
         },
 
         drive);
-    // Use addRequirements() here to declare subsystem dependencies.
-    // Configure additional PID options by calling `getController` here.getController().enableContinuousInput(-180, 180);
+    
+    // Configure additional PID options by calling `getController` here.getController().enableContinuousInput(-180, 180); 
+    getController().enableContinuousInput(-180, 180);  
+    
     getController().setTolerance(DriveConstants.kTurnToleranceDeg,
-                                DriveConstants.kTurnRateToleranceDegPerS);
-
+                                DriveConstants.kTurnRateToleranceDegPerS);                         
   }
 
   public void initialize() {
@@ -64,12 +65,13 @@ public class TurnDegreesProfiled extends ProfiledPIDCommand {
   public void execute() {
     // TODO Auto-generated method stub
     super.execute();
-    SmartDashboard.putNumber("goal (deg.)", getController().getGoal().position);
-    SmartDashboard.putNumber("setpoint (deg.)", getController().getSetpoint().position);
-    SmartDashboard.putNumber("Pos. Error (deg.)", getController().getPositionError());
-    SmartDashboard.putNumber("Vel. Error (deg.)", getController().getVelocityError());
-    SmartDashboard.putBoolean("atSetpoint (deg.)", getController().atSetpoint());
-    SmartDashboard.putBoolean("atGoal (deg.)", getController().atGoal());
+    // SmartDashboard.putData("Turn PID", getController());
+    SmartDashboard.putNumber("(deg.) goal", getController().getGoal().position);
+    SmartDashboard.putNumber("(deg.) setpoint", getController().getSetpoint().position);
+    SmartDashboard.putNumber("(deg.) Pos. Error", getController().getPositionError());
+    SmartDashboard.putNumber("(deg.) Vel. Error", getController().getVelocityError());
+    SmartDashboard.putBoolean("(deg.) atSetpoint", getController().atSetpoint());
+    SmartDashboard.putBoolean("(deg.) atGoal", getController().atGoal());
   }
 
   // Returns true when the command should end.
