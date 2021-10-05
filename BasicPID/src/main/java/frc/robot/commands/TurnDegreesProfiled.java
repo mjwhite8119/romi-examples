@@ -57,7 +57,6 @@ public class TurnDegreesProfiled extends ProfiledPIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setGoal(table.getEntry("Heading Angle Degrees").getDouble(0.0));
     getController().setP(table.getEntry("anglekP").getDouble(1.0));
     getController().setD(table.getEntry("anglekD").getDouble(0.0));
   }
@@ -65,7 +64,6 @@ public class TurnDegreesProfiled extends ProfiledPIDCommand {
   public void execute() {
     // TODO Auto-generated method stub
     super.execute();
-    // SmartDashboard.putData("Turn PID", getController());
     SmartDashboard.putNumber("(deg.) goal", getController().getGoal().position);
     SmartDashboard.putNumber("(deg.) setpoint", getController().getSetpoint().position);
     SmartDashboard.putNumber("(deg.) Pos. Error", getController().getPositionError());

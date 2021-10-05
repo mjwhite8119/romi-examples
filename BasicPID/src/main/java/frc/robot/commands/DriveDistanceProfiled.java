@@ -53,10 +53,8 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setGoal(table.getEntry("Auto Distance Meters").getDouble(0.0));
     getController().setP(table.getEntry("kP").getDouble(1.0));
     getController().setD(table.getEntry("kD").getDouble(0.0));
-    System.out.println("Starting distance");
   }
 
   public void execute() {

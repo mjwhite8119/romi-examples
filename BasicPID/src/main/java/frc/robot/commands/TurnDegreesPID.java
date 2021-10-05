@@ -52,7 +52,6 @@ public class TurnDegreesPID extends PIDCommand {
     // Override PID parameters from Shuffleboard
     getController().setP(table.getEntry("anglekP").getDouble(1.0));
     getController().setD(table.getEntry("anglekD").getDouble(0.0));
-    System.out.println("Starting turn");
   }
 
   public void execute() {
