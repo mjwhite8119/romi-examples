@@ -16,10 +16,12 @@ public class AutonomousPIDDistance extends SequentialCommandGroup {
    */
   
   public AutonomousPIDDistance(Drivetrain drivetrain) {
+    drivetrain.arcadeDrive(0, 0);
+    drivetrain.resetEncoders();
     addCommands(
         new DriveDistanceProfiled(0.5, drivetrain),
-        new TurnDegreesPID(180, drivetrain),
-        new DriveDistanceProfiled(-0.5, drivetrain),
-        new TurnDegreesPID(0, drivetrain));
+        new TurnDegreesProfiled(90, drivetrain),
+        new DriveDistanceProfiled(0.0, drivetrain),
+        new TurnDegreesProfiled(0, drivetrain));
   }
 }

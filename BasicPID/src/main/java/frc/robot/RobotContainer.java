@@ -95,11 +95,11 @@ public class RobotContainer {
       .withPosition(6, 0);
 
     // In meters  
-    m_distance = driveTab.add("Auto Distance Meters", 0.3)
-      .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 0, "max", 5))
-      .withPosition(3, 0)
-      .getEntry();
+    // m_distance = driveTab.add("Auto Distance Meters", 0.3)
+    //   .withWidget(BuiltInWidgets.kNumberSlider)
+    //   .withProperties(Map.of("min", 0, "max", 5))
+    //   .withPosition(3, 0)
+    //   .getEntry();
 
     m_distanceP = driveTab.add("kP", Constants.DriveConstants.kDistanceP)
       .withPosition(3, 1)
@@ -113,16 +113,17 @@ public class RobotContainer {
       .withPosition(4, 0)
       .getEntry();  
 
-    m_angleP = driveTab.add("anglekP", 0.5)
+    m_angleP = driveTab.add("anglekP", 0.7)
       .withPosition(4, 1)
       .getEntry();  
 
     m_angleD = driveTab.add("anglekD", 0.0)
-      .withPosition(5, 2)
+      .withPosition(4, 2)
       .getEntry();  
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousPIDDistance(m_drivetrain));
+    m_chooser.setDefaultOption("Auto PID Distance", new AutonomousPIDDistance(m_drivetrain));
+    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
 
