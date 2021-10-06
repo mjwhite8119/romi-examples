@@ -109,15 +109,15 @@ public class RobotContainer {
       .withPosition(3, 2)
       .getEntry();  
   
-    m_angle = driveTab.add("Heading Angle Degrees", 0)
+    m_angle = driveTab.add("Heading Angle Degrees", m_drivetrain.getHeading())
       .withPosition(4, 0)
       .getEntry();  
 
-    m_angleP = driveTab.add("anglekP", 0.7)
+    m_angleP = driveTab.add("anglekP", Constants.DriveConstants.kTurnP)
       .withPosition(4, 1)
       .getEntry();  
 
-    m_angleD = driveTab.add("anglekD", 0.0)
+    m_angleD = driveTab.add("anglekD", Constants.DriveConstants.kTurnD)
       .withPosition(4, 2)
       .getEntry();  
 

@@ -149,12 +149,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getHeading() {
-    double leftDistance = Math.abs(getLeftDistance());
-    double rightDistance = Math.abs(getRightDistance());
-    double heading = Math.toDegrees((leftDistance + rightDistance) / 2.0);
-    // double angle = getGyroAngleZ();
-    // double rotations = Math.round(angle/360);
-    // double heading = angle - (rotations*360);
+    // double leftDistance = Math.abs(getLeftDistance());
+    // double rightDistance = Math.abs(getRightDistance());
+    // double heading = Math.toDegrees((leftDistance + rightDistance) / 2.0);
+    double angle = getGyroAngleZ();
+    double rotations = Math.round(angle/360);
+    double heading = angle - (rotations*360);
     return heading;
   }
 
@@ -167,5 +167,6 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     m_heading.setDouble(getHeading());
+    SmartDashboard.putNumber("Position", getAverageDistanceMeters());
   }
 }

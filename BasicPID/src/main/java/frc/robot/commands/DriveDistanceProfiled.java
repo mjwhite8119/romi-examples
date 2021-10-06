@@ -44,7 +44,6 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
         },
         // Use addRequirements() here to declare subsystem dependencies.
         drive);
-    
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(DriveConstants.kDistanceToleranceMeters,
                                 DriveConstants.kVelocityToleranceMetersPerS);
@@ -58,9 +57,7 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
   }
 
   public void execute() {
-    // TODO Auto-generated method stub
     super.execute();
-    // SmartDashboard.putData("Distance PID", getController());
     SmartDashboard.putNumber("goal", getController().getGoal().position);
     SmartDashboard.putNumber("setpoint", getController().getSetpoint().position);
     SmartDashboard.putNumber("Pos. Error", getController().getPositionError());

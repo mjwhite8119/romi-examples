@@ -36,7 +36,7 @@ public class TurnDegreesPID extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          drive.turn(output/10);
+          drive.turn(output/100);
         },
         // Use addRequirements() here to declare subsystem dependencies.
         drive);
@@ -55,7 +55,6 @@ public class TurnDegreesPID extends PIDCommand {
   }
 
   public void execute() {
-    // TODO Auto-generated method stub
     super.execute(); 
     SmartDashboard.putNumber("(deg.) setpoint", getController().getSetpoint());
     SmartDashboard.putNumber("(deg.) Pos. Error", getController().getPositionError());
