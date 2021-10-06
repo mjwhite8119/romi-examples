@@ -8,7 +8,7 @@ import json
 import time
 import sys
 
-import main
+import processImage
 
 from cscore import CameraServer, VideoSource, UsbCamera, MjpegServer
 from networktables import NetworkTablesInstance
@@ -259,4 +259,4 @@ if __name__ == "__main__":
     imageHeight = cameras[0].getVideoMode().height
     outputStream = CameraServer.getInstance().putVideo("Target", imageWidth, imageHeight)
 
-    main.start_process(cv_sink, ntinst, outputStream, imageWidth, imageHeight)
+    processImage.start_process(cv_sink, ntinst, outputStream, imageWidth, imageHeight)
