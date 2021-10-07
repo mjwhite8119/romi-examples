@@ -19,6 +19,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
+// New components added to this project.
+import frc.robot.subsystems.Vision;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -30,6 +35,8 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
 
+  public static final Vision m_vision = new Vision();
+  
   // Assumes a gamepad plugged into channnel 0
   private final Joystick m_controller = new Joystick(0);
 
@@ -48,9 +55,9 @@ public class RobotContainer {
   // Your subsystem configuration should take the overlays into account
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the button bindings
+  public RobotContainer() { 
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
@@ -74,6 +81,20 @@ public class RobotContainer {
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
+  }
+
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
+
+    // Create a tab for the Drivetrain
+    ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+
+    // Add the Drivetrain subsystem
+    visionTab.add(m_drivetrain)
+      .withPosition(6, 0);
   }
 
   /**

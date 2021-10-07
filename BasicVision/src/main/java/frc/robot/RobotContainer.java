@@ -19,6 +19,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
+// New components added to this project.
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -51,6 +55,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    setupShuffleboard();
   }
 
   /**
@@ -75,6 +81,16 @@ public class RobotContainer {
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
+
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
+
+    // Create a tab for the Vision
+    ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+  }  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
