@@ -93,11 +93,11 @@ public class RobotContainer {
    */
   private void setupShuffleboard() {
 
-    // Create a tab for the Drivetrain
+    // Create a tab for the Vision
     ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
 
-    // Add the Drivetrain subsystem
-    visionTab.add(m_drivetrain)
+    // Add the Vision subsystem
+    visionTab.add(m_vision)
       .withPosition(6, 0);
   }
 

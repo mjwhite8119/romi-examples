@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 // New components added to this project.
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,6 +41,8 @@ public class RobotContainer {
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+  private NetworkTableEntry m_camera;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -90,6 +94,11 @@ public class RobotContainer {
 
     // Create a tab for the Vision
     ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+
+    // m_camera = visionTab.add("Camera Stream", videoSource)
+    //   .withWidget(BuiltInWidgets.kCameraStream)
+    //   .withPosition(3, 0)
+    //   .getEntry();
   }  
 
   /**
