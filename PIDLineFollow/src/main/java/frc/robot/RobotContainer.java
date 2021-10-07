@@ -18,10 +18,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 // New components added to this project.
 import frc.robot.subsystems.Vision;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.PIDLineFollow;
 import frc.robot.commands.LineFollowPIDCommand;
 
@@ -58,6 +59,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
@@ -77,28 +79,28 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Setup the commands for line following
-    configureLineFollowing();
-
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    m_chooser.addOption("Custom Line Follow", new PIDLineFollow(m_drivetrain, m_vision));
+    m_chooser.addOption("PID Line Follow", new LineFollowPIDCommand());
     SmartDashboard.putData(m_chooser);
   }
 
-  private void configureLineFollowing() {
-    // Follow the line using home made PID controller
-    new JoystickButton(m_controller, Constants.Joystick.START)
-      .whenPressed(new PIDLineFollow(m_drivetrain, m_vision));  
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
 
-    // Follow line using WpiLib PIDCommand and controller
-    new JoystickButton(m_controller, Constants.Joystick.SELECT)
-      .whenPressed(new LineFollowPIDCommand());  
-      
-    // Add commands to Shuffleboard
-    SmartDashboard.putData("Custom Line Follow", new PIDLineFollow(m_drivetrain, m_vision));  
-    SmartDashboard.putData("WPI Line Follow", new LineFollowPIDCommand());   
+    // Create a tab for the Drivetrain
+    ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+
+    // Add the Drivetrain subsystem
+    visionTab.add(m_drivetrain)
+      .withPosition(6, 0);
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

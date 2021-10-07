@@ -67,8 +67,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
@@ -88,19 +88,27 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Setup Shuffleboard input
+    // Setup SmartDashboard options
+    m_chooser.setDefaultOption("Auto PID Distance", new AutonomousPIDDistance(m_drivetrain));
+    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
+    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    SmartDashboard.putData(m_chooser);
+  }
+
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
+
+    // Create a tab for the Drivetrain
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
+    // Add the Drivetrain subsystem
     driveTab.add(m_drivetrain)
       .withPosition(6, 0);
 
-    // In meters  
-    // m_distance = driveTab.add("Auto Distance Meters", 0.3)
-    //   .withWidget(BuiltInWidgets.kNumberSlider)
-    //   .withProperties(Map.of("min", 0, "max", 5))
-    //   .withPosition(3, 0)
-    //   .getEntry();
-
+    // Add PID tuning parameters
     m_distanceP = driveTab.add("kP", Constants.DriveConstants.kDistanceP)
       .withPosition(3, 1)
       .getEntry();  
@@ -109,27 +117,17 @@ public class RobotContainer {
       .withPosition(3, 2)
       .getEntry();  
   
-    m_angle = driveTab.add("Heading Angle Degrees", 0)
+    m_angle = driveTab.add("Heading Angle Degrees", m_drivetrain.getHeading())
       .withPosition(4, 0)
       .getEntry();  
 
-    m_angleP = driveTab.add("anglekP", 0.7)
+    m_angleP = driveTab.add("anglekP", Constants.DriveConstants.kTurnP)
       .withPosition(4, 1)
       .getEntry();  
 
-    m_angleD = driveTab.add("anglekD", 0.0)
+    m_angleD = driveTab.add("anglekD", Constants.DriveConstants.kTurnD)
       .withPosition(4, 2)
       .getEntry();  
-
-    // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto PID Distance", new AutonomousPIDDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
-    SmartDashboard.putData(m_chooser);
-
-    // Test the PID commands
-    // SmartDashboard.putData("Heading", new TurnDegreesPID(0, m_drivetrain));
-    // SmartDashboard.putData("Profiled Heading", new TurnDegreesProfiled(0, m_drivetrain));
   }
 
   /**

@@ -4,20 +4,16 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+  private static final double kCountsPerRevolution = 1440.0;
+  private static final double kWheelDiameterInch = 2.75591; // 70 mm
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
@@ -38,35 +34,16 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
-  // Used to put data onto Shuffleboard
-  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-  private NetworkTableEntry m_heading = 
-    driveTab.add("Current Heading", 0)
-      .withPosition(5, 3)
-      .withWidget(BuiltInWidgets.kGraph)
-      .getEntry();
-
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeters) / Constants.DriveConstants.kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeters) / Constants.DriveConstants.kCountsPerRevolution);
+    m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     resetEncoders();
-    resetGyro();
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
-    SmartDashboard.putNumber("zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
-  }
-
-  public void steer(double speed) {
-    SmartDashboard.putNumber("speed", speed);
-    arcadeDrive(speed, 0);
-  }
-
-  public void turn(double rotate) {
-    arcadeDrive(0, rotate);
   }
 
   public void resetEncoders() {
@@ -82,16 +59,16 @@ public class Drivetrain extends SubsystemBase {
     return m_rightEncoder.get();
   }
 
-  public double getLeftDistance() {
+  public double getLeftDistanceInch() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistance() {
+  public double getRightDistanceInch() {
     return m_rightEncoder.getDistance();
   }
 
-  public double getAverageDistanceMeters() {
-    return (getLeftDistance() + getRightDistance()) / 2.0;
+  public double getAverageDistanceInch() {
+    return (getLeftDistanceInch() + getRightDistanceInch()) / 2.0;
   }
 
   /**
@@ -148,16 +125,6 @@ public class Drivetrain extends SubsystemBase {
     return m_gyro.getAngleZ();
   }
 
-  public double getHeading() {
-    // double leftDistance = Math.abs(getLeftDistance());
-    // double rightDistance = Math.abs(getRightDistance());
-    // double heading = Math.toDegrees((leftDistance + rightDistance) / 2.0);
-    double angle = getGyroAngleZ();
-    double rotations = Math.round(angle/360);
-    double heading = angle - (rotations*360);
-    return heading;
-  }
-
   /** Reset the gyro. */
   public void resetGyro() {
     m_gyro.reset();
@@ -166,7 +133,5 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_heading.setDouble(getHeading());
-    SmartDashboard.putNumber("Position", getAverageDistanceMeters());
   }
 }

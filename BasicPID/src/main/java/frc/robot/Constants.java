@@ -15,7 +15,6 @@ package frc.robot;
 public final class Constants {
     public final class DriveConstants {
         public static final double kCountsPerRevolution = 1440.0;
-        public static final double kWheelDiameterInch = 2.75591; // 70 mm
         public static final double kWheelDiameterMeters = 0.07; // 70 mm
 
         // For distances
@@ -26,11 +25,11 @@ public final class Constants {
         public static final double kDistanceToleranceMeters = 0.1;
         public static final double kVelocityToleranceMetersPerS = 1;
 
-        public static final double kMaxVelocityMeters = 0.15;
+        public static final double kMaxVelocityMeters = 0.5;
         public static final double kMaxAcceMeters = 1.8;
 
         // For turns
-        public static final double kTurnP = 0.7;
+        public static final double kTurnP = 1.9;
         public static final double kTurnI = 0;
         public static final double kTurnD = 0;
 
