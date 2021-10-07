@@ -14,10 +14,8 @@ def start_process(cv_sink, nt_instance, output, imageWidth, imageHeight):
         targetData.putNumber("centerX", center_x)
         targetData.putNumber("centerY", center_y)
 
-        # Draw a line on the frame
-        # cv2.circle(frame, center=(center_x,center_y), 5, (0,0,255), 2)
-        # cv2.line(frame, (center_x,0), (center_x, imageHeight), (0,0,255), 2)
-        # cv2.line(frame, (center_y,0), (center_y, imageWidth), (0,0,255), 2)    
+        # Draw a circle on the frame
+        cv2.circle(frame, (center_x,center_y), 5, (0,0,255), 2) 
 
         # Send processed images to Shuffleboard
         if time == 0: # There is an error
