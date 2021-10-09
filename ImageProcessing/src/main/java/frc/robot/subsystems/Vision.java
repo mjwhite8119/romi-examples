@@ -24,7 +24,6 @@ public class Vision extends SubsystemBase {
     private int rectHeight;
 
     public Vision() {
-        visionEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("data");
         centerEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("centerX");
         rectWidthEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("rectWidth");
         rectHeightEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("rectHeight");

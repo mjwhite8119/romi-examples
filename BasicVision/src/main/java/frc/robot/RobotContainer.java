@@ -98,18 +98,18 @@ public class RobotContainer {
     ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
 
     NetworkTableEntry m_centerX = 
-    visionTab.add("Center X", 0)
+    visionTab.add("targetData/centerX", 0)
       .withPosition(5, 0)
       .getEntry();
 
     NetworkTableEntry m_centerY = 
-      visionTab.add("Center y", 0)
-        .withPosition(6, 0)
+      visionTab.add("targetData/centerY", 0)
+        .withPosition(7, 0)
         .getEntry();    
 
     // m_camera = visionTab.add("Camera Stream", videoSource)
     //   .withWidget(BuiltInWidgets.kCameraStream)
-    //   .withPosition(3, 0)
+    //   .withPosition(5, 2)
     //   .getEntry();
   }  
 
