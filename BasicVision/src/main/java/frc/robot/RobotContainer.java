@@ -43,6 +43,8 @@ public class RobotContainer {
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   private NetworkTableEntry m_camera;
+  private NetworkTableEntry m_centerX;
+  private NetworkTableEntry m_centerY;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -94,6 +96,16 @@ public class RobotContainer {
 
     // Create a tab for the Vision
     ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+
+    NetworkTableEntry m_centerX = 
+    visionTab.add("Center X", 0)
+      .withPosition(5, 0)
+      .getEntry();
+
+    NetworkTableEntry m_centerY = 
+      visionTab.add("Center y", 0)
+        .withPosition(6, 0)
+        .getEntry();    
 
     // m_camera = visionTab.add("Camera Stream", videoSource)
     //   .withWidget(BuiltInWidgets.kCameraStream)

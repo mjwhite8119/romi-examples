@@ -25,8 +25,8 @@ public final class Constants {
         public static final double kDistanceToleranceMeters = 0.1;
         public static final double kVelocityToleranceMetersPerS = 1;
 
-        public static final double kMaxVelocityMeters = 0.5;
-        public static final double kMaxAcceMeters = 1.8;
+        public static final double kMaxSpeedMetersPerSecond = 0.5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
 
         // For turns
         public static final double kTurnP = 1.9;
