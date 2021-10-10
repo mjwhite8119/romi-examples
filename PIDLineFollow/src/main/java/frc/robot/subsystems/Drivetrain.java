@@ -6,8 +6,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,6 +37,11 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
+  // Moving average filter used to smooth out control outputs
+  private LinearFilter m_filter = LinearFilter.movingAverage(5);
+
+  private double m_prevOutput = 0;
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
@@ -46,8 +54,33 @@ public class Drivetrain extends SubsystemBase {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
-  public void steer(double heading) {
-    arcadeDrive(.5, heading);
+  public void straight(double speed) {
+    // SmartDashboard.putNumber("speed", speed);
+    arcadeDrive(speed, 0);
+  }
+
+  public void turn(double rotate) {
+    // SmartDashboard.putNumber("rotate", rotate);
+    arcadeDrive(0, rotate);  
+  }
+
+  public void steer(double rotate) {
+    SmartDashboard.putNumber("rotate", rotate);
+    // Slow down around sharp bends
+    double speed = 0.5 - (Math.abs(rotate) * 0.2);
+    SmartDashboard.putNumber("speed", speed);
+
+    arcadeDrive(speed, rotate);
+    // Implement the moving average filter.
+    // arcadeDrive(0.5, m_filter.calculate(rotate));
+
+    // // Ignore sudden changes in rotation
+    // if (Math.abs(rotate - m_prevOutput) > Constants.Vision.OUTPUT_TOLERENCE ) {
+    //   arcadeDrive(0.5, m_prevOutput); 
+    // } else {
+    //   arcadeDrive(0.5, -rotate); 
+    //   m_prevOutput = rotate; 
+    // }   
   }
 
   public void stop() {
@@ -136,6 +169,11 @@ public class Drivetrain extends SubsystemBase {
   /** Reset the gyro. */
   public void resetGyro() {
     m_gyro.reset();
+  }
+
+  /** Reset the last control output command */
+  public void resetOutput() {
+    m_prevOutput = 0;
   }
 
   @Override

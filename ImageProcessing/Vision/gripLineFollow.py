@@ -18,8 +18,8 @@ class GripPipeline:
         self.blur_output = None
 
         self.__hsv_threshold_input = self.blur_output
-        self.__hsv_threshold_hue = [11.33093525179855, 118.87945670628181]
-        self.__hsv_threshold_saturation = [13.758992805755396, 133.77758913412563]
+        self.__hsv_threshold_hue = [11.33093525179855, 123.46349745331068]
+        self.__hsv_threshold_saturation = [0.0, 109.96604414261459]
         self.__hsv_threshold_value = [0.0, 229.02376910016977]
 
         self.hsv_threshold_output = None
@@ -30,7 +30,7 @@ class GripPipeline:
         self.find_contours_output = None
 
         self.__filter_contours_contours = self.find_contours_output
-        self.__filter_contours_min_area = 81.0
+        self.__filter_contours_min_area = 83.0
         self.__filter_contours_min_perimeter = 0.0
         self.__filter_contours_min_width = 0.0
         self.__filter_contours_max_width = 1000.0

@@ -56,6 +56,7 @@ public final class Constants {
 
     public static final class Vision {
         public static final int END_OF_LINE = 20;
-        public static final int SETPOINT = 75;
+        public static final int SETPOINT = 85;
+        public static final double OUTPUT_TOLERENCE = 0.2;
     }
 }

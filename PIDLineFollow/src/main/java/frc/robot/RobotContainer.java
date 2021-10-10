@@ -83,7 +83,7 @@ public class RobotContainer {
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     m_chooser.addOption("Custom Line Follow", new PIDLineFollow(m_drivetrain, m_vision));
-    m_chooser.addOption("PID Line Follow", new LineFollowPIDCommand());
+    m_chooser.addOption("PID Line Follow", new LineFollowPIDCommand(m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 

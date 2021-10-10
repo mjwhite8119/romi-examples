@@ -19,16 +19,26 @@ public class LineFollowPIDCommand extends PIDCommand {
     private final Drivetrain chassisSubsystem;
     private final Vision visionSubsystem;
 
-    public LineFollowPIDCommand() {
+    public LineFollowPIDCommand(Drivetrain drive) {
         super(
             new PIDController(Constants.Drive.KP, 0, 0), 
             RobotContainer.m_vision::getCenterX, 
             Constants.Vision.SETPOINT,
-            RobotContainer.m_drivetrain::steer,
+            output -> {
+                // Use the output here
+                drive.steer(-output);
+              },
             RobotContainer.m_drivetrain
         );
         chassisSubsystem = RobotContainer.m_drivetrain;
         visionSubsystem = RobotContainer.m_vision;
+    }
+
+    public void initialize() {
+        super.initialize();
+        // Make sure everything starts from zero
+        RobotContainer.m_drivetrain.arcadeDrive(0, 0);
+        RobotContainer.m_drivetrain.resetOutput();
     }
 
     @Override
