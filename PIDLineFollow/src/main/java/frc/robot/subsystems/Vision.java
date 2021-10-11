@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,6 +23,9 @@ public class Vision extends SubsystemBase {
 
     private int rectWidth;
     private int rectHeight;
+
+    // Moving average filter used to smooth out control outputs
+    private MedianFilter m_filter = new MedianFilter(5);
 
     public Vision() {
         visionEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("data");

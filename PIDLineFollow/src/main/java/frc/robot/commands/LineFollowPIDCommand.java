@@ -48,6 +48,6 @@ public class LineFollowPIDCommand extends PIDCommand {
 
     @Override
     public boolean isFinished() {
-        return visionSubsystem.getRectHeight() < Constants.Vision.END_OF_LINE;
+        return visionSubsystem.getRectArea() < Constants.Vision.END_OF_LINE;
     }
 }
