@@ -4,19 +4,17 @@
 
 package frc.robot;
 
-import java.util.Map;
+import static edu.wpi.first.wpilibj.XboxController.Button;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousPIDDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.StateSpaceDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -24,7 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
+// import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,19 +37,11 @@ public class RobotContainer {
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
 
   // Assumes a gamepad plugged into channnel 0
-  private final Joystick m_controller = new Joystick(0);
+  // private final Joystick m_joystick = new Joystick(0);
+  private final XboxController m_joystick = new XboxController(0);
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-
-  // Used to get data input from Shuffleboard
-  private NetworkTableEntry m_distance;
-  private NetworkTableEntry m_distanceP;
-  private NetworkTableEntry m_distanceD;
-
-  private NetworkTableEntry m_angle;
-  private NetworkTableEntry m_angleP;
-  private NetworkTableEntry m_angleD;
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -65,6 +56,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Configure the button bindings
     configureButtonBindings();
     setupShuffleboard();
   }
@@ -81,16 +73,19 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
     // Example of how to use the onboard IO
-    Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
-    onboardButtonA
-        .whenActive(new PrintCommand("Button A Pressed"))
-        .whenInactive(new PrintCommand("Button A Released"));
+    // Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
+    // onboardButtonA
+    //     .whenActive(new PrintCommand("Button A Pressed"))
+    //     .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto PID Distance", new AutonomousPIDDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
+    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     SmartDashboard.putData(m_chooser);
+
+    double metersPerSecond = 0.2;
+    new JoystickButton(m_joystick, Button.kB.value)
+      .whenPressed(new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(5));
   }
 
   /**
@@ -99,35 +94,18 @@ public class RobotContainer {
    */
   private void setupShuffleboard() {
 
-    // Create a tab for the Drivetrain
-    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+    // Create a tab for the Vision
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
-    // Add the Drivetrain subsystem
-    driveTab.add(m_drivetrain)
-      .withPosition(6, 0);
+    double leftEncoderRate = m_drivetrain.getLeftEncoderRate();
+    double rightEncoderRate = m_drivetrain.getLeftEncoderRate();
+    SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
+    SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
 
-    // Add PID tuning parameters
-    m_distanceP = driveTab.add("kP", Constants.DriveConstants.kDistanceP)
-      .withPosition(3, 1)
-      .getEntry();  
-
-    m_distanceD = driveTab.add("kD", Constants.DriveConstants.kDistanceD)
-      .withPosition(3, 2)
-      .getEntry();  
-  
-    m_angle = driveTab.add("Heading Angle Degrees", m_drivetrain.getHeading())
-      .withPosition(4, 0)
-      .getEntry();  
-
-    m_angleP = driveTab.add("anglekP", Constants.DriveConstants.kTurnP)
-      .withPosition(4, 1)
-      .getEntry();  
-
-    m_angleD = driveTab.add("anglekD", Constants.DriveConstants.kTurnD)
-      .withPosition(4, 2)
-      .getEntry();  
+    SmartDashboard.putNumber("Left Voltage", 0);
+    SmartDashboard.putNumber("Right Voltage", 0);
   }
-
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -144,6 +122,6 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(2));
+        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(2));
   }
 }

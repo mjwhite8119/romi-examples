@@ -42,7 +42,7 @@ public class TurnDegreesPID extends PIDCommand {
         drive);
     
     // Configure additional PID options by calling `getController` here.
-    // getController().enableContinuousInput(-180, 180);
+    getController().enableContinuousInput(-180, 180);
     getController().setTolerance(DriveConstants.kTurnToleranceDeg,
                                 DriveConstants.kTurnRateToleranceDegPerS);
   }

@@ -18,7 +18,7 @@ public final class Constants {
         public static final double kWheelDiameterMeters = 0.07; // 70 mm
 
         // For distances
-        public static final double kDistanceP = 2.5;
+        public static final double kDistanceP = 3.2;
         public static final double kDistanceI = 0;
         public static final double kDistanceD = 0;
 
@@ -29,7 +29,7 @@ public final class Constants {
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
 
         // For turns
-        public static final double kTurnP = 1.9;
+        public static final double kTurnP = 2.5;
         public static final double kTurnI = 0;
         public static final double kTurnD = 0;
 

@@ -66,7 +66,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void turn(double rotate) {
-    arcadeDrive(0, rotate);
+    if (rotate > 0.4) {
+      arcadeDrive(0, 0.4);
+    } else if (rotate < -0.4) {
+      arcadeDrive(0, -0.4);  
+    } else {
+      arcadeDrive(0, rotate);
+    }   
   }
 
   public void resetEncoders() {
