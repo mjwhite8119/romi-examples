@@ -73,14 +73,6 @@ public class Drivetrain extends SubsystemBase {
     arcadeDrive(speed, rotate);
     // Implement the moving average filter.
     // arcadeDrive(0.5, m_filter.calculate(rotate));
-
-    // // Ignore sudden changes in rotation
-    // if (Math.abs(rotate - m_prevOutput) > Constants.Vision.OUTPUT_TOLERENCE ) {
-    //   arcadeDrive(0.5, m_prevOutput); 
-    // } else {
-    //   arcadeDrive(0.5, -rotate); 
-    //   m_prevOutput = rotate; 
-    // }   
   }
 
   public void stop() {
