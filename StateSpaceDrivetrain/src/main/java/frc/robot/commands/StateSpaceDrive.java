@@ -65,9 +65,12 @@ public class StateSpaceDrive extends CommandBase {
     SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
     SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
 
-    // Update our LQR to generate new voltage commands and use the voltages to predict the next
-    // state with out Kalman filter.
+    // Update our LQR to generate new voltage commands and use the voltages to 
+    // predict the next state with our Kalman filter.
     m_drive.m_loop.predict(0.020);
+
+    double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
+    SmartDashboard.putNumber("Kalman Gain", kalmanGain);
 
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
