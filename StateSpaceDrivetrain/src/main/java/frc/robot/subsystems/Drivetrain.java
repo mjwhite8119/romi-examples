@@ -80,10 +80,10 @@ public class Drivetrain extends SubsystemBase {
   private final LinearQuadraticRegulator<N2, N2, N2> m_controller =
       new LinearQuadraticRegulator<>(
           m_drivetrainPlant,
-          VecBuilder.fill(0.2, 0.2), // qelms. Velocity
+          VecBuilder.fill(0.5, 0.5), // qelms. Velocity
           // error tolerances, in meters per second. Decrease this to more
           // heavily penalize state excursion, or make the controller behave more aggressively.
-          VecBuilder.fill(6.0, 6.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+          VecBuilder.fill(3.0, 3.0), // relms. Control effort (voltage) tolerance. Decrease this to more
           // heavily penalize control effort, or make the controller less aggressive. 6 is a good
           // starting point because that is the (approximate) maximum voltage of a battery.
           0.020);
@@ -94,11 +94,12 @@ public class Drivetrain extends SubsystemBase {
 
   // Used to put data onto Shuffleboard
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+
   private NetworkTableEntry m_leftEncoderRate = 
-    driveTab.add("Left Encoder Rate", getLeftEncoderRate())
+    driveTab.add("Left Encoder Rate", 0)
       .withWidget(BuiltInWidgets.kGraph)
       .withPosition(3, 3)
-      .getEntry();
+      .getEntry();    
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -106,6 +107,27 @@ public class Drivetrain extends SubsystemBase {
     m_leftEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeter) / Constants.DriveConstants.kCountsPerRevolution);
     m_rightEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeter) / Constants.DriveConstants.kCountsPerRevolution);
     resetEncoders();
+    showLinearSystem();
+  }
+
+  public void showLinearSystem() {
+    driveTab.add("A1", m_drivetrainPlant.getA(0,0))
+      .withPosition(0, 1);
+    driveTab.add("A2", m_drivetrainPlant.getA(0,1))
+      .withPosition(1, 1); 
+    driveTab.add("A3", m_drivetrainPlant.getA(1,0))
+      .withPosition(0, 2);
+    driveTab.add("A4", m_drivetrainPlant.getA(1,1))
+      .withPosition(1, 2);   
+        
+    driveTab.add("B1", m_drivetrainPlant.getB(0,0))
+      .withPosition(0, 4);
+    driveTab.add("B2", m_drivetrainPlant.getB(0,1))
+      .withPosition(1, 4); 
+    driveTab.add("B3", m_drivetrainPlant.getB(1,0))
+      .withPosition(0, 5);
+    driveTab.add("B4", m_drivetrainPlant.getB(1,1))
+      .withPosition(1, 5);     
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {

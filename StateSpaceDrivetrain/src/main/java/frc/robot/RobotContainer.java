@@ -85,8 +85,8 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     double metersPerSecond = 0.2;
-    new JoystickButton(m_joystick, Button.kB.value)
-      .whenPressed(new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(5));
+    // new JoystickButton(m_joystick, Button.kB.value)
+    //   .whenPressed(new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(5));
   }
 
   /**
@@ -98,21 +98,13 @@ public class RobotContainer {
     // Create a tab for the Drivetrain
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
+    // Add button to run the StateSpaceDrive command
     double metersPerSecond = 0.2;
     double timeout = 5;
-    driveTab.add("Left Encoder Rate", new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(timeout))
+    driveTab.add("Run StateSpaceDrive", new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(timeout))
       .withWidget(BuiltInWidgets.kCommand)
-      .withPosition(5, 3);
-
-    // SmartDashboard.putData("State Space Drive", new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(timeout));
-      
-    // double leftEncoderRate = m_drivetrain.getLeftEncoderRate();
-    // double rightEncoderRate = m_drivetrain.getLeftEncoderRate();
-    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
-
-    // SmartDashboard.putNumber("Left Voltage", 0);
-    // SmartDashboard.putNumber("Right Voltage", 0);
+      .withPosition(0, 0)
+      .withSize(2, 1);
   }
   
   /**

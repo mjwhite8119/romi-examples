@@ -25,13 +25,13 @@ public final class Constants {
 
         // The linear velocity gain, volts per (meter per second)
         public static final double kvVoltSecondsPerMeter = 9.7;
-        // The linear acceleration gain, volts per (meter per second squared).
-        public static final double kaVoltSecondsSquaredPerMeter = 0.4737;
-
         // The angular velocity gain, volts per (radians per second)
         public static final double kvVoltSecondsPerRadian = 0.345;
+
+        // The linear acceleration gain, volts per (meter per second squared).
+        public static final double kaVoltSecondsSquaredPerMeter = 0.0737;
         // The angular acceleration gain, volts per (radians per second squared)
-        public static final double kaVoltSecondsSquaredPerRadian = 0.0235;
+        public static final double kaVoltSecondsSquaredPerRadian = 0.00235;
 
         // Max volts that can be sent to the motors
         public static final double maxVolts = 6.0;

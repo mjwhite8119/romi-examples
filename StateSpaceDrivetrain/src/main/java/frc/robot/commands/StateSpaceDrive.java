@@ -35,16 +35,20 @@ public class StateSpaceDrive extends CommandBase {
       .withWidget(BuiltInWidgets.kGraph)
       .withPosition(3, 0)
       .getEntry();
-  private NetworkTableEntry m_kalmanGain = 
-    driveTab.add("Kalman Gain", 0)
+  private NetworkTableEntry m_voltageU = 
+    driveTab.add("Voltage U", 0)
       .withWidget(BuiltInWidgets.kGraph)
-      .withPosition(5, 0)
+      .withPosition(6, 0)
       .getEntry();
   private NetworkTableEntry m_feedForward = 
-    driveTab.add("Kalman Gain", 0)
+    driveTab.add("FeedForward", 0)
       .withWidget(BuiltInWidgets.kGraph)
-      .withPosition(5, 3)
-      .getEntry();   
+      .withPosition(6, 3)
+      .getEntry();
+  private NetworkTableEntry m_kalmanGain = 
+    driveTab.add("Kalman Gain", 0)
+      .withPosition(0, 3)
+      .getEntry();
 
   /**
    * Constructs a StateSpaceDrive command
@@ -72,13 +76,6 @@ public class StateSpaceDrive extends CommandBase {
 
     // Report starting voltage to Shuffleboard
     m_leftVoltage.setDouble(m_drive.m_loop.getU(0));
-
-    // double nextLeftVoltage = m_drive.m_loop.getU(0);
-    // double nextRightVoltage = m_drive.m_loop.getU(1);
-    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
-    
-    // System.out.println("Running StateSpace Command");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -91,7 +88,8 @@ public class StateSpaceDrive extends CommandBase {
 
     m_lastProfiledReference =
         (new TrapezoidProfile(m_constraints, goal, m_lastProfiledReference)).calculate(0.020);
-    m_drive.m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
+
+    m_drive.m_loop.setNextR(m_lastProfiledReference.velocity, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
     // Get the current rate of the encoder. Units are distance per second as 
@@ -100,15 +98,9 @@ public class StateSpaceDrive extends CommandBase {
     double rightEncoderRate = m_drive.getRightEncoderRate();
     m_drive.m_loop.correct(VecBuilder.fill(leftEncoderRate,rightEncoderRate));
 
-    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
-
     // Update our LQR to generate new voltage commands and use the voltages to 
     // predict the next state with our Kalman filter.
     m_drive.m_loop.predict(0.020);
-
-    
-    // SmartDashboard.putNumber("Kalman Gain", kalmanGain);
 
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
@@ -118,20 +110,20 @@ public class StateSpaceDrive extends CommandBase {
     m_drive.setLeftVoltage(nextLeftVoltage);
     m_drive.setRightVoltage(-nextRightVoltage);
 
-    // Put voltage on Shuffleboard
+    // Put feedforward on Shuffleboard
+    double ff = m_drive.m_loop.getFeedforward().getUff(0);
+    m_feedForward.setDouble(ff);
+
+    // Put the calculated U voltage on Shuffleboard
+    double leftVoltageU = m_drive.m_loop.getController().getU(0);
+    m_voltageU.setDouble(leftVoltageU);
+
+    // Put the combined U voltage and feedforward voltage on Shuffleboard
     m_leftVoltage.setDouble(nextLeftVoltage);
 
     // Put Kalman Gain on Shuffleboard
     double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
     m_kalmanGain.setDouble(kalmanGain);
-
-    // Put feedforward on Shuffleboard
-    double ff = m_drive.m_loop.getFeedforward().getUff(0);
-    m_feedForward.setDouble(ff);
-
-    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
-    // System.out.println("executing");
   }
 
   // Called once the command ends or is interrupted.
@@ -143,17 +135,6 @@ public class StateSpaceDrive extends CommandBase {
     // Report last voltage
     double nextLeftVoltage = m_drive.m_loop.getU(0);
     m_leftVoltage.setDouble(nextLeftVoltage);
-
-    // double nextLeftVoltage = m_drive.m_loop.getU(0);
-    // double nextRightVoltage = m_drive.m_loop.getU(1);
-    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
-
-    // Report last speed
-    // double leftEncoderRate = m_drive.getLeftEncoderRate();
-    // double rightEncoderRate = m_drive.getLeftEncoderRate();
-    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
   }
 
   // Returns true when the command should end.
