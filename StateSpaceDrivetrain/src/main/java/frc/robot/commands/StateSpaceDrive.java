@@ -39,7 +39,12 @@ public class StateSpaceDrive extends CommandBase {
     driveTab.add("Kalman Gain", 0)
       .withWidget(BuiltInWidgets.kGraph)
       .withPosition(5, 0)
-      .getEntry();    
+      .getEntry();
+  private NetworkTableEntry m_feedForward = 
+    driveTab.add("Kalman Gain", 0)
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(5, 3)
+      .getEntry();   
 
   /**
    * Constructs a StateSpaceDrive command
@@ -60,6 +65,11 @@ public class StateSpaceDrive extends CommandBase {
     m_drive.resetEncoders();
     m_drive.m_loop.reset(Matrix.mat(Nat.N2(), Nat.N1()).fill(0,0));
 
+    // Reset our last reference to the current state.
+    m_lastProfiledReference =
+        new TrapezoidProfile.State(m_drive.getLeftEncoderRate(), 
+                                   m_drive.getLeftEncoderRate());
+
     // Report starting voltage to Shuffleboard
     m_leftVoltage.setDouble(m_drive.m_loop.getU(0));
 
@@ -74,17 +84,20 @@ public class StateSpaceDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Sets the target speed of our drivetrain. This is similar to setting the setpoint of a
-    // PID controller.
-    // We just pressed the trigger, so let's set our next reference
-    // goal = new TrapezoidProfile.State(kHighGoalPosition, 0.0);
-    m_drive.m_loop.setNextR(VecBuilder.fill(m_speed, m_speed));
+    // Sets the target speed of our drivetrain. 
+    // This is similar to setting the setpoint of a PID controller.
+    TrapezoidProfile.State goal = new TrapezoidProfile.State(m_speed, m_speed);
+    // m_drive.m_loop.setNextR(VecBuilder.fill(m_speed, m_speed));
+
+    m_lastProfiledReference =
+        (new TrapezoidProfile(m_constraints, goal, m_lastProfiledReference)).calculate(0.020);
+    m_drive.m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
     // Get the current rate of the encoder. Units are distance per second as 
     // scaled by the value from setDistancePerPulse().
     double leftEncoderRate = m_drive.getLeftEncoderRate();
-    double rightEncoderRate = m_drive.getLeftEncoderRate();
+    double rightEncoderRate = m_drive.getRightEncoderRate();
     m_drive.m_loop.correct(VecBuilder.fill(leftEncoderRate,rightEncoderRate));
 
     // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
@@ -94,8 +107,7 @@ public class StateSpaceDrive extends CommandBase {
     // predict the next state with our Kalman filter.
     m_drive.m_loop.predict(0.020);
 
-    double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
-    m_kalmanGain.setDouble(kalmanGain);
+    
     // SmartDashboard.putNumber("Kalman Gain", kalmanGain);
 
     // Send the new calculated voltage to the motors.
@@ -106,7 +118,16 @@ public class StateSpaceDrive extends CommandBase {
     m_drive.setLeftVoltage(nextLeftVoltage);
     m_drive.setRightVoltage(-nextRightVoltage);
 
+    // Put voltage on Shuffleboard
     m_leftVoltage.setDouble(nextLeftVoltage);
+
+    // Put Kalman Gain on Shuffleboard
+    double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
+    m_kalmanGain.setDouble(kalmanGain);
+
+    // Put feedforward on Shuffleboard
+    double ff = m_drive.m_loop.getFeedforward().getUff(0);
+    m_feedForward.setDouble(ff);
 
     // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
     // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
