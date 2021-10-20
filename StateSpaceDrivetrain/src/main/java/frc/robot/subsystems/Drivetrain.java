@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
@@ -18,6 +19,9 @@ import edu.wpi.first.wpiutil.math.numbers.N2;
 import edu.wpi.first.wpiutil.math.Nat;
 import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
 import edu.wpi.first.wpilibj.estimator.KalmanFilter;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.system.LinearSystem;
 import edu.wpi.first.wpilibj.system.LinearSystemLoop;
 import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
@@ -88,6 +92,13 @@ public class Drivetrain extends SubsystemBase {
   public final LinearSystemLoop<N2, N2, N2> m_loop =
       new LinearSystemLoop<>(m_drivetrainPlant, m_controller, m_observer, Constants.DriveConstants.maxVolts, 0.020);
 
+  // Used to put data onto Shuffleboard
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+  private NetworkTableEntry m_leftEncoderRate = 
+    driveTab.add("Left Encoder Rate", getLeftEncoderRate())
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(3, 3)
+      .getEntry();
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -125,8 +136,11 @@ public class Drivetrain extends SubsystemBase {
   // Get the current rate of the encoder. 
   // Units are distance per second (speed) as
   // scaled by the value from setDistancePerPulse().
+  // Also write out to the network tables for Shuffleboard
   public double getLeftEncoderRate() {
-    return m_leftEncoder.getRate();
+    double rate = m_leftEncoder.getRate();
+    m_leftEncoderRate.setDouble(rate);
+    return rate;
   }
 
   public double getRightEncoderRate() {

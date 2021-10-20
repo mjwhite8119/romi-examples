@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.Matrix;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpiutil.math.Nat;
 import edu.wpi.first.wpiutil.math.VecBuilder;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.networktables.NetworkTableEntry;
 
 public class StateSpaceDrive extends CommandBase {
   /** Creates a new StateSpaceDrive. */
@@ -23,8 +26,28 @@ public class StateSpaceDrive extends CommandBase {
                                        Constants.DriveConstants.maxAccelPerSecond); 
   private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
 
+  // Get data from Shuffleboard
+  // NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  // NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+  private NetworkTableEntry m_leftVoltage = 
+    driveTab.add("Left Voltage", 0)
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(3, 0)
+      .getEntry();
+  private NetworkTableEntry m_kalmanGain = 
+    driveTab.add("Kalman Gain", 0)
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(5, 0)
+      .getEntry();    
+
+  /**
+   * Constructs a StateSpaceDrive command
+   *
+   * @param speed Speed at which the robot should travel.
+   * @param drive The Drivetrain
+   */
   public StateSpaceDrive(double speed, Drivetrain drive) {
-    // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
     m_speed = speed;
     addRequirements(drive);
@@ -37,13 +60,15 @@ public class StateSpaceDrive extends CommandBase {
     m_drive.resetEncoders();
     m_drive.m_loop.reset(Matrix.mat(Nat.N2(), Nat.N1()).fill(0,0));
 
-    // Report starting voltage
-    double nextLeftVoltage = m_drive.m_loop.getU(0);
-    double nextRightVoltage = m_drive.m_loop.getU(1);
-    SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
+    // Report starting voltage to Shuffleboard
+    m_leftVoltage.setDouble(m_drive.m_loop.getU(0));
+
+    // double nextLeftVoltage = m_drive.m_loop.getU(0);
+    // double nextRightVoltage = m_drive.m_loop.getU(1);
+    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
+    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
     
-    System.out.println("Running StateSpace Command");
+    // System.out.println("Running StateSpace Command");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -62,15 +87,16 @@ public class StateSpaceDrive extends CommandBase {
     double rightEncoderRate = m_drive.getLeftEncoderRate();
     m_drive.m_loop.correct(VecBuilder.fill(leftEncoderRate,rightEncoderRate));
 
-    SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
+    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
+    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
 
     // Update our LQR to generate new voltage commands and use the voltages to 
     // predict the next state with our Kalman filter.
     m_drive.m_loop.predict(0.020);
 
     double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
-    SmartDashboard.putNumber("Kalman Gain", kalmanGain);
+    m_kalmanGain.setDouble(kalmanGain);
+    // SmartDashboard.putNumber("Kalman Gain", kalmanGain);
 
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
@@ -80,8 +106,10 @@ public class StateSpaceDrive extends CommandBase {
     m_drive.setLeftVoltage(nextLeftVoltage);
     m_drive.setRightVoltage(-nextRightVoltage);
 
-    SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
+    m_leftVoltage.setDouble(nextLeftVoltage);
+
+    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
+    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
     // System.out.println("executing");
   }
 
@@ -93,15 +121,18 @@ public class StateSpaceDrive extends CommandBase {
 
     // Report last voltage
     double nextLeftVoltage = m_drive.m_loop.getU(0);
-    double nextRightVoltage = m_drive.m_loop.getU(1);
-    SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
-    SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
+    m_leftVoltage.setDouble(nextLeftVoltage);
+
+    // double nextLeftVoltage = m_drive.m_loop.getU(0);
+    // double nextRightVoltage = m_drive.m_loop.getU(1);
+    // SmartDashboard.putNumber("Left Voltage", nextLeftVoltage);
+    // SmartDashboard.putNumber("Right Voltage", nextRightVoltage);
 
     // Report last speed
-    double leftEncoderRate = m_drive.getLeftEncoderRate();
-    double rightEncoderRate = m_drive.getLeftEncoderRate();
-    SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
+    // double leftEncoderRate = m_drive.getLeftEncoderRate();
+    // double rightEncoderRate = m_drive.getLeftEncoderRate();
+    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
+    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
   }
 
   // Returns true when the command should end.

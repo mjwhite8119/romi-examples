@@ -9,6 +9,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.ArcadeDrive;
@@ -94,16 +95,24 @@ public class RobotContainer {
    */
   private void setupShuffleboard() {
 
-    // Create a tab for the Vision
-    ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
+    // Create a tab for the Drivetrain
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
-    double leftEncoderRate = m_drivetrain.getLeftEncoderRate();
-    double rightEncoderRate = m_drivetrain.getLeftEncoderRate();
-    SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
-    SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
+    double metersPerSecond = 0.2;
+    double timeout = 5;
+    driveTab.add("Left Encoder Rate", new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(timeout))
+      .withWidget(BuiltInWidgets.kCommand)
+      .withPosition(5, 3);
 
-    SmartDashboard.putNumber("Left Voltage", 0);
-    SmartDashboard.putNumber("Right Voltage", 0);
+    // SmartDashboard.putData("State Space Drive", new StateSpaceDrive(metersPerSecond, m_drivetrain).withTimeout(timeout));
+      
+    // double leftEncoderRate = m_drivetrain.getLeftEncoderRate();
+    // double rightEncoderRate = m_drivetrain.getLeftEncoderRate();
+    // SmartDashboard.putNumber("Left Encoder Rate", leftEncoderRate);
+    // SmartDashboard.putNumber("Right Encoder Rate", rightEncoderRate);
+
+    // SmartDashboard.putNumber("Left Voltage", 0);
+    // SmartDashboard.putNumber("Right Voltage", 0);
   }
   
   /**

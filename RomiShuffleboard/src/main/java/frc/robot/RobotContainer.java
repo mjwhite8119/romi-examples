@@ -61,6 +61,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
@@ -83,26 +84,39 @@ public class RobotContainer {
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
-    SmartDashboard.putData(m_chooser);
+    SmartDashboard.putData(m_chooser);  
+  }
 
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
     // Setup Shuffleboard input
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
-    m_distance = driveTab.add("Auto Distance", 0.5)
+    // Add slider to adjust distance
+    driveTab.add("Auto Distance", 0.5)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 0, "max", 5))
-      .withPosition(3, 0)
-      .getEntry();
+      .withPosition(3, 0);
+      // .getEntry();
 
+    // Add slider to adjust angle
     driveTab.add("Auto Angle", 5)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 0, "max", 180))
       .withPosition(3, 3);
       // .getEntry();
 
+    // Add a button to run the AutonomousDistance command
+    driveTab.add("Run Autonomous Distance", new AutonomousDistance(m_drivetrain))
+      .withWidget(BuiltInWidgets.kCommand)
+      .withPosition(5, 3);  
+
     driveTab.add(m_drivetrain)
       .withPosition(0, 0);
-  }
+  }  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
