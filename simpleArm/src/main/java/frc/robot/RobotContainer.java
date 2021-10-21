@@ -13,14 +13,19 @@ import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import frc.robot.subsystems.Vision;
 import frc.robot.commands.PositionArm;
+import frc.robot.commands.StateSpaceArm;
 import frc.robot.commands.PIDLineFollow;
 import frc.robot.commands.FollowLinePIDCommand;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,6 +60,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
@@ -102,6 +108,23 @@ public class RobotContainer {
     SmartDashboard.putData("Move Arm DOWN", new PositionArm(m_arm, 0));
       
   }
+
+  private void setupShuffleboard() {
+
+    // Create a tab for the Drivetrain
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Arm");
+
+    // Add button to run the StateSpaceArm command
+    driveTab.add("Move Arm UP", new StateSpaceArm(1, m_arm))
+      .withWidget(BuiltInWidgets.kCommand)
+      .withPosition(0, 0)
+      .withSize(2, 1);
+    driveTab.add("Move Arm Down", new StateSpaceArm(0, m_arm))
+      .withWidget(BuiltInWidgets.kCommand)
+      .withPosition(0, 1)
+      .withSize(2, 1);
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

@@ -27,8 +27,6 @@ public class StateSpaceDrive extends CommandBase {
   private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
 
   // Get data from Shuffleboard
-  // NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  // NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
   private NetworkTableEntry m_leftVoltage = 
     driveTab.add("Left Voltage", 0)
