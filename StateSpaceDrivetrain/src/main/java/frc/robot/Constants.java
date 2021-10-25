@@ -42,14 +42,24 @@ public final class Constants {
         public static final double kCountsPerRevolution = 1440.0;
         public static final double kWheelDiameterMeter = 0.07;
 
-        public static final double maxVelocityPerSecond = 0.5;
-        public static final double maxAccelPerSecond = 1.0;
+        public static final double kMaxSpeedMetersPerSecond = 0.5;
+        public static final double kMaxAccelMetersPerSecondSquared = 1.0;
 
         public static final double kTrackwidthMeters = 0.142072613;
         public static final DifferentialDriveKinematics kDriveKinematics =
             new DifferentialDriveKinematics(kTrackwidthMeters);
 
         
+    }
+
+    public static final class ControlConstants {
+        // qelms. Velocity error tolerances, in meters per second. Decrease this to more
+        // heavily penalize state excursion, or make the controller behave more aggressively.
+        public static final double kMaxVelocityError = 0.5;  
+        // relms. Control effort (voltage) tolerance. Decrease this to more
+        // heavily penalize control effort, or make the controller less aggressive. 6 is a good
+        // starting point because that is the (approximate) maximum voltage of a battery.
+        public static final double kMaxControlEffort = 3.0;
     }
 
     public final class Joystick {

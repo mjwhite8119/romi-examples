@@ -14,18 +14,12 @@ import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // New classes for this project
-import edu.wpi.first.wpiutil.math.VecBuilder;
 import edu.wpi.first.wpiutil.math.numbers.N2;
-import edu.wpi.first.wpiutil.math.Nat;
-import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
-import edu.wpi.first.wpilibj.estimator.KalmanFilter;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.system.LinearSystem;
-import edu.wpi.first.wpilibj.system.LinearSystemLoop;
 import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -65,33 +59,7 @@ public class Drivetrain extends SubsystemBase {
                                               Constants.DriveConstants.kvVoltSecondsPerRadian, 
                                               Constants.DriveConstants.kaVoltSecondsSquaredPerRadian);
 
-  // The observer fuses our encoder data and voltage inputs to reject noise.
-  private final KalmanFilter<N2, N2, N2> m_observer =
-      new KalmanFilter<>(
-          Nat.N2(),
-          Nat.N2(),
-          m_drivetrainPlant,
-          VecBuilder.fill(3.0, 3.0), // How accurate we think our model is
-          VecBuilder.fill(0.05, 0.05), // How accurate we think our encoder
-          // data is
-          0.020);
-
-  // A LQR uses feedback to create voltage commands.
-  private final LinearQuadraticRegulator<N2, N2, N2> m_controller =
-      new LinearQuadraticRegulator<>(
-          m_drivetrainPlant,
-          VecBuilder.fill(0.5, 0.5), // qelms. Velocity
-          // error tolerances, in meters per second. Decrease this to more
-          // heavily penalize state excursion, or make the controller behave more aggressively.
-          VecBuilder.fill(3.0, 3.0), // relms. Control effort (voltage) tolerance. Decrease this to more
-          // heavily penalize control effort, or make the controller less aggressive. 6 is a good
-          // starting point because that is the (approximate) maximum voltage of a battery.
-          0.020);
-
-  // The state-space loop combines a controller, observer, feedforward and plant for easy control.
-  public final LinearSystemLoop<N2, N2, N2> m_loop =
-      new LinearSystemLoop<>(m_drivetrainPlant, m_controller, m_observer, Constants.DriveConstants.maxVolts, 0.020);
-
+  
   // Used to put data onto Shuffleboard
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
@@ -238,6 +206,16 @@ public class Drivetrain extends SubsystemBase {
   /** Reset the gyro. */
   public void resetGyro() {
     m_gyro.reset();
+  }
+
+  /**
+   * Return the State Space representation of this drivetrain
+   * referred to as the Plant in control theory.
+   *
+   * @return The drivetrain plant
+   */
+  public LinearSystem<N2, N2, N2> getPlant() {
+    return m_drivetrainPlant;
   }
 
   @Override

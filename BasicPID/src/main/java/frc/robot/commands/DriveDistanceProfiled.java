@@ -27,12 +27,12 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            DriveConstants.kDistanceP, 
-            DriveConstants.kDistanceI, 
-            DriveConstants.kDistanceD,
+            DriveConstants.kPDriveVel,
+            DriveConstants.kIDriveVel,
+            DriveConstants.kDDriveVel,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxSpeedMetersPerSecond,
-                                            Constants.DriveConstants.kMaxAccelerationMetersPerSecondSquared)),
+                                            Constants.DriveConstants.kMaxAccelMetersPerSecondSquared)),
         // This should return the measurement
         drive::getAverageDistanceMeters,
         // This should return the goal (can also be a constant)

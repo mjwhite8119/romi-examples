@@ -23,9 +23,9 @@ public class DriveDistancePID extends PIDCommand {
   public DriveDistancePID(double targetDistance, Drivetrain drive) {
     super(
         // The controller that the command will use
-        new PIDController(DriveConstants.kDistanceP, 
-                          DriveConstants.kDistanceI, 
-                          DriveConstants.kDistanceD),
+        new PIDController(DriveConstants.kPDriveVel,
+                          DriveConstants.kIDriveVel,
+                          DriveConstants.kDDriveVel),
         // This should return the measurement
         drive::getAverageDistanceMeters,
         // This should return the setpoint (can also be a constant)

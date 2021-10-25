@@ -15,15 +15,22 @@ import edu.wpi.first.wpiutil.math.VecBuilder;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpiutil.math.numbers.N2;
+import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
+import edu.wpi.first.wpilibj.estimator.KalmanFilter;
+import edu.wpi.first.wpilibj.system.LinearSystemLoop;
 
 public class StateSpaceDrive extends CommandBase {
   /** Creates a new StateSpaceDrive. */
   private final Drivetrain m_drive;
   private final double m_speed;
+  private final KalmanFilter<N2, N2, N2> m_observer;
+  private final LinearQuadraticRegulator<N2, N2, N2> m_controller;
+  private final LinearSystemLoop<N2, N2, N2> m_loop;
 
   private final TrapezoidProfile.Constraints m_constraints =
-      new TrapezoidProfile.Constraints(Constants.DriveConstants.maxVelocityPerSecond,
-                                       Constants.DriveConstants.maxAccelPerSecond); 
+      new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxSpeedMetersPerSecond,
+                                       Constants.DriveConstants.kMaxAccelMetersPerSecondSquared);
   private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
 
   // Get data from Shuffleboard
@@ -58,6 +65,33 @@ public class StateSpaceDrive extends CommandBase {
     m_drive = drive;
     m_speed = speed;
     addRequirements(drive);
+    // The observer fuses our encoder data and voltage inputs to reject noise.
+    m_observer = 
+      new KalmanFilter<>(
+          Nat.N2(),
+          Nat.N2(),
+          m_drive.getPlant(),
+          VecBuilder.fill(3.0, 3.0), // How accurate we think our model is
+          VecBuilder.fill(0.05, 0.05), // How accurate we think our encoder
+          // data is
+          0.020);
+
+      // A LQR uses feedback to create voltage commands.
+      m_controller =
+        new LinearQuadraticRegulator<>(
+            m_drive.getPlant(),
+            // qelms. Velocity error tolerances
+            VecBuilder.fill(Constants.ControlConstants.kMaxVelocityError, 
+                            Constants.ControlConstants.kMaxControlEffort), 
+            // relms. Control effort (voltage) tolerance
+            VecBuilder.fill(Constants.ControlConstants.kMaxControlEffort, 
+                            Constants.ControlConstants.kMaxControlEffort),
+            0.020);
+
+      // The state-space loop combines a controller, observer, feedforward and plant for easy control.
+      m_loop = new LinearSystemLoop<>
+        (m_drive.getPlant(), m_controller, m_observer, Constants.DriveConstants.maxVolts, 0.020);
+
   }
 
   // Called when the command is initially scheduled.
@@ -65,7 +99,7 @@ public class StateSpaceDrive extends CommandBase {
   public void initialize() {
     m_drive.arcadeDrive(0, 0);
     m_drive.resetEncoders();
-    m_drive.m_loop.reset(Matrix.mat(Nat.N2(), Nat.N1()).fill(0,0));
+    m_loop.reset(Matrix.mat(Nat.N2(), Nat.N1()).fill(0,0));
 
     // Reset our last reference to the current state.
     m_lastProfiledReference =
@@ -73,7 +107,7 @@ public class StateSpaceDrive extends CommandBase {
                                    m_drive.getLeftEncoderRate());
 
     // Report starting voltage to Shuffleboard
-    m_leftVoltage.setDouble(m_drive.m_loop.getU(0));
+    m_leftVoltage.setDouble(m_loop.getU(0));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -87,40 +121,40 @@ public class StateSpaceDrive extends CommandBase {
     m_lastProfiledReference =
         (new TrapezoidProfile(m_constraints, goal, m_lastProfiledReference)).calculate(0.020);
 
-    m_drive.m_loop.setNextR(m_lastProfiledReference.velocity, m_lastProfiledReference.velocity);
+    m_loop.setNextR(m_lastProfiledReference.velocity, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
     // Get the current rate of the encoder. Units are distance per second as 
     // scaled by the value from setDistancePerPulse().
     double leftEncoderRate = m_drive.getLeftEncoderRate();
     double rightEncoderRate = m_drive.getRightEncoderRate();
-    m_drive.m_loop.correct(VecBuilder.fill(leftEncoderRate,rightEncoderRate));
+    m_loop.correct(VecBuilder.fill(leftEncoderRate,rightEncoderRate));
 
     // Update our LQR to generate new voltage commands and use the voltages to 
     // predict the next state with our Kalman filter.
-    m_drive.m_loop.predict(0.020);
+    m_loop.predict(0.020);
 
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
-    double nextLeftVoltage = m_drive.m_loop.getU(0);
-    double nextRightVoltage = m_drive.m_loop.getU(1);
+    double nextLeftVoltage = m_loop.getU(0);
+    double nextRightVoltage = m_loop.getU(1);
     m_drive.setLeftVoltage(nextLeftVoltage);
     m_drive.setRightVoltage(-nextRightVoltage);
 
     // Put feedforward on Shuffleboard
-    double ff = m_drive.m_loop.getFeedforward().getUff(0);
+    double ff = m_loop.getFeedforward().getUff(0);
     m_feedForward.setDouble(ff);
 
     // Put the calculated U voltage on Shuffleboard
-    double leftVoltageU = m_drive.m_loop.getController().getU(0);
+    double leftVoltageU = m_loop.getController().getU(0);
     m_voltageU.setDouble(leftVoltageU);
 
     // Put the combined U voltage and feedforward voltage on Shuffleboard
     m_leftVoltage.setDouble(nextLeftVoltage);
 
     // Put Kalman Gain on Shuffleboard
-    double kalmanGain = m_drive.m_loop.getController().getK().get(0, 0);
+    double kalmanGain = m_loop.getController().getK().get(0, 0);
     m_kalmanGain.setDouble(kalmanGain);
   }
 
@@ -128,10 +162,10 @@ public class StateSpaceDrive extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     // Put the setpoint to zero
-    m_drive.m_loop.setNextR(VecBuilder.fill(0.0, 0.0));
+    m_loop.setNextR(VecBuilder.fill(0.0, 0.0));
 
     // Report last voltage
-    double nextLeftVoltage = m_drive.m_loop.getU(0);
+    double nextLeftVoltage = m_loop.getU(0);
     m_leftVoltage.setDouble(nextLeftVoltage);
   }
 

@@ -18,20 +18,20 @@ public final class Constants {
         public static final double kWheelDiameterMeters = 0.07; // 70 mm
 
         // For distances
-        public static final double kDistanceP = 3.2;
-        public static final double kDistanceI = 0;
-        public static final double kDistanceD = 0;
+        public static final double kPDriveVel = 3.2;
+        public static final double kIDriveVel = 0;
+        public static final double kDDriveVel = 0;
 
         public static final double kDistanceToleranceMeters = 0.1;
         public static final double kVelocityToleranceMetersPerS = 1;
 
         public static final double kMaxSpeedMetersPerSecond = 0.5;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+        public static final double kMaxAccelMetersPerSecondSquared = 0.5;
 
         // For turns
-        public static final double kTurnP = 2.5;
-        public static final double kTurnI = 0;
-        public static final double kTurnD = 0;
+        public static final double kPTurnVel = 2.5;
+        public static final double kITurnVel = 0;
+        public static final double kDTurnVel = 0;
 
         public static final double kTurnToleranceDeg = 10;
         public static final double kTurnRateToleranceDegPerS = 10;

@@ -23,9 +23,9 @@ public class TurnDegreesPID extends PIDCommand {
   public TurnDegreesPID(double targetAngleDegrees, Drivetrain drive) {
     super(
         // The controller that the command will use
-        new PIDController(DriveConstants.kTurnP, 
-                          DriveConstants.kTurnI, 
-                          DriveConstants.kTurnD),
+        new PIDController(DriveConstants.kPTurnVel,
+                          DriveConstants.kITurnVel, 
+                          DriveConstants.kDTurnVel),
 
         // This should return the measurement
         drive::getHeading,
