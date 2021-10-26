@@ -18,10 +18,16 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
     public static final class DriveConstants {
-        // public static final double ksVolts = 0.929;
-        // public static final double kvVoltSecondsPerMeter = 6.33;
-        // public static final double kaVoltSecondsSquaredPerMeter = 0.0389;
-        public static final double ksVolts = 0.461;
+        // Physical constants
+        public static final double kCountsPerRevolution = 1440.0;
+        public static final double kWheelDiameterMeter = 0.07;
+        public static final double kTrackwidthMeters = 0.142072613;
+        public static final DifferentialDriveKinematics kDriveKinematics =
+            new DifferentialDriveKinematics(kTrackwidthMeters);
+
+        // Dynamical constants
+        public static final double kMaxSpeedMetersPerSecond = 0.5;
+        public static final double kMaxAccelMetersPerSecondSquared = 0.5;
 
         // The linear velocity gain, volts per (meter per second)
         public static final double kvVoltSecondsPerMeter = 9.7;
@@ -31,24 +37,18 @@ public final class Constants {
         // The linear acceleration gain, volts per (meter per second squared).
         public static final double kaVoltSecondsSquaredPerMeter = 0.0737;
         // The angular acceleration gain, volts per (radians per second squared)
-        public static final double kaVoltSecondsSquaredPerRadian = 0.00235;
+        public static final double kaVoltSecondsSquaredPerRadian = 0.0002;
+        // public static final double kaVoltSecondsSquaredPerRadian = 0.00235;
 
         // Max volts that can be sent to the motors
-        public static final double maxVolts = 6.0;
+        public static final double maxVolts = 7.0;
 
-        public static final double kPDriveVel = 0.085;
+        // For distances PID
+        public static final double kPDriveVel = 3.2;
+        public static final double kIDriveVel = 0;
+        public static final double kDDriveVel = 0;
+        // public static final double kPDriveVel = 0.085;
         // public static final double kPDriveVel = 0.141;
-
-        public static final double kCountsPerRevolution = 1440.0;
-        public static final double kWheelDiameterMeter = 0.07;
-
-        public static final double kMaxSpeedMetersPerSecond = 0.5;
-        public static final double kMaxAccelMetersPerSecondSquared = 1.0;
-
-        public static final double kTrackwidthMeters = 0.142072613;
-        public static final DifferentialDriveKinematics kDriveKinematics =
-            new DifferentialDriveKinematics(kTrackwidthMeters);
-
         
     }
 
@@ -59,7 +59,7 @@ public final class Constants {
         // relms. Control effort (voltage) tolerance. Decrease this to more
         // heavily penalize control effort, or make the controller less aggressive. 6 is a good
         // starting point because that is the (approximate) maximum voltage of a battery.
-        public static final double kMaxControlEffort = 3.0;
+        public static final double kMaxControlEffort = 6.0;
     }
 
     public final class Joystick {
