@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.ArcadeDrive;
@@ -26,9 +29,7 @@ import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -67,6 +68,19 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
+  }
+
+  /**
+   * Setup Shuffleboard
+   *
+   */
+  private void setupShuffleboard() {
+
+    // Create a tab for the Drivetrain
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+
+    
   }
 
   public Trajectory navigateConesTrajectory() {
@@ -91,6 +105,24 @@ public class RobotContainer {
 
     return trajectory;
   }
+
+  public Trajectory driveSquareTrajectory() {
+    // Note that all coordinates are in meters, and follow NWU conventions.
+    // If you would like to specify coordinates in inches (which might be easier
+    // to deal with for the Romi), you can use the Units.inchesToMeters() method
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            new Translation2d(0.5, 0.25), // left  
+            new Translation2d(1.0, -0.25), // right 
+            new Translation2d(1.5, 0) // forward           
+        ),
+        new Pose2d(0.0, 0.0, new Rotation2d(Math.PI)),
+        DriveConstants.kTrajectoryConfig);
+
+    return trajectory;
+  }
   
 
   /**
@@ -103,40 +135,7 @@ public class RobotContainer {
    * @return A SequentialCommand that sets up and executes a trajectory following Ramsete command
    */
   private Command generateRamseteCommand(Trajectory trajectory) {
-    // var autoVoltageConstraint =
-    //     new DifferentialDriveVoltageConstraint(
-    //         new SimpleMotorFeedforward(DriveConstants.ksVolts, 
-    //                                    DriveConstants.kvVoltSecondsPerMeter, 
-    //                                    DriveConstants.kaVoltSecondsSquaredPerMeter),
-    //         DriveConstants.kDriveKinematics,
-    //         10);
-
-    // TrajectoryConfig config =
-    //     new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond, 
-    //                          DriveConstants.kMaxAccelMetersPerSecondSquared)
-    //         .setKinematics(DriveConstants.kDriveKinematics)
-    //         .addConstraint(DriveConstants.kAutoVoltageConstraint);
-
-    // // This trajectory can be modified to suit your purposes
-    // // Note that all coordinates are in meters, and follow NWU conventions.
-    // // If you would like to specify coordinates in inches (which might be easier
-    // // to deal with for the Romi), you can use the Units.inchesToMeters() method
-    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     List.of(
-    //         new Translation2d(0.5, 0.25), // 1 Left
-    //         new Translation2d(1.0, -0.5), // 2 Right
-    //         new Translation2d(1.4, 0.5),  // 3 Left
-    //         new Translation2d(2.5, 0.0),  // 4 Center
-    //         new Translation2d(1.8, -0.25), // 5  Right        
-    //         new Translation2d(1.4, 0.25),  // 6 Left
-    //         new Translation2d(1.1, 0.1),   // 7 Left
-    //         new Translation2d(0.75, -1.0)   // 8 Right
-    //     ),
-    //     new Pose2d(-0.0, -0.30, new Rotation2d(Math.PI)),
-    //     DriveConstants.kTrajectoryConfig);
-
+    
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         m_drivetrain::getPose,
@@ -179,7 +178,8 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
+    m_chooser.setDefaultOption("Drive Square Trajectory", generateRamseteCommand(driveSquareTrajectory()));
+    m_chooser.addOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
     m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     

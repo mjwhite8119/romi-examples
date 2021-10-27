@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.system.LinearSystem;
-import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -42,24 +41,6 @@ public class Drivetrain extends SubsystemBase {
 
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
-
-  // // Identify a standard differential drive drivetrain, given the drivetrain's kV and kA in both
-  // // linear (volts/(meter/sec) and volts/(meter/sec^2)) and angular (volts/(radian/sec) and
-  // // volts/(radian/sec^2)) cases. 
-  // // The Kv and Ka constants are found using the FRC Characterization toolsuite.
-  // // 
-  // // The plant holds a state-space model of our drivetrain. This system has the following properties:
-  // // 
-  // // State is: [left velocity, right velocity]
-  // // Inputs are [left voltage, right voltage]
-  // // Outputs are [left velocity, right velocity].
-  
-  // private final LinearSystem<N2, N2, N2> DriveConstants.kDrivetrainPlant =
-  //     LinearSystemId.identifyDrivetrainSystem(Constants.DriveConstants.kvVoltSecondsPerMeter, 
-  //                                             Constants.DriveConstants.kaVoltSecondsSquaredPerMeter, 
-  //                                             Constants.DriveConstants.kvVoltSecondsPerRadian, 
-  //                                             Constants.DriveConstants.kaVoltSecondsSquaredPerRadian);
-
   
   // Used to put data onto Shuffleboard
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");

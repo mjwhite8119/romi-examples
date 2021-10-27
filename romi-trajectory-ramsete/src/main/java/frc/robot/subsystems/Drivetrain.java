@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
@@ -16,12 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class Drivetrain extends SubsystemBase {
-  private static final double kCountsPerRevolution = 1440.0;
-  private static final double kWheelDiameterMeter = 0.07;
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
@@ -42,16 +42,16 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
+  // Used to put data onto Shuffleboard
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+  private NetworkTableEntry m_heading = 
+    driveTab.add("Current Heading", 0)
+      .withPosition(5, 3)
+      .withWidget(BuiltInWidgets.kGraph)
+      .getEntry();
+      
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
-
-  // public final DifferentialDriveVoltageConstraint autoVoltageConstraint =
-  //       new DifferentialDriveVoltageConstraint(
-  //           new SimpleMotorFeedforward(DriveConstants.ksVolts, 
-  //                                      DriveConstants.kvVoltSecondsPerMeter, 
-  //                                      DriveConstants.kaVoltSecondsSquaredPerMeter),
-  //           DriveConstants.kDriveKinematics,
-  //           10);
 
   // Also show a field diagram
   private final Field2d m_field2d = new Field2d();
@@ -59,8 +59,8 @@ public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeter) / kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeter) / kCountsPerRevolution);
+    m_leftEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeters) / DriveConstants.kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeters) / DriveConstants.kCountsPerRevolution);
     resetEncoders();
 
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
@@ -95,16 +95,16 @@ public class Drivetrain extends SubsystemBase {
     return m_rightEncoder.get();
   }
 
-  public double getLeftDistanceMeter() {
+  public double getLeftDistance() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistanceMeter() {
+  public double getRightDistance() {
     return m_rightEncoder.getDistance();
   }
 
-  public double getAverageDistanceMeter() {
-    return (getLeftDistanceMeter() + getRightDistanceMeter()) / 2.0;
+  public double getAverageDistanceMeters() {
+    return (getLeftDistance() + getRightDistance()) / 2.0;
   }
 
   /**
@@ -166,15 +166,6 @@ public class Drivetrain extends SubsystemBase {
     m_gyro.reset();
   }
 
-  @Override
-  public void periodic() {
-    // Update the odometry in the periodic block
-    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-    
-    // Also update the Field2D object (so that we can visualize this in sim)
-    m_field2d.setRobotPose(getPose());
-  }
-
   /**
    * Returns the currently estimated pose of the robot.
    * @return The pose
@@ -230,4 +221,12 @@ public class Drivetrain extends SubsystemBase {
   public double getTurnRate() {
     return -m_gyro.getRate();
   }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    m_heading.setDouble(getHeading());
+    SmartDashboard.putNumber("Position", getAverageDistanceMeters());
+  }
+
 }
