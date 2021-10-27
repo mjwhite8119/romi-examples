@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -42,22 +43,22 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
-  // Identify a standard differential drive drivetrain, given the drivetrain's kV and kA in both
-  // linear (volts/(meter/sec) and volts/(meter/sec^2)) and angular (volts/(radian/sec) and
-  // volts/(radian/sec^2)) cases. 
-  // The Kv and Ka constants are found using the FRC Characterization toolsuite.
-  // 
-  // The plant holds a state-space model of our drivetrain. This system has the following properties:
-  // 
-  // State is: [left velocity, right velocity]
-  // Inputs are [left voltage, right voltage]
-  // Outputs are [left velocity, right velocity].
+  // // Identify a standard differential drive drivetrain, given the drivetrain's kV and kA in both
+  // // linear (volts/(meter/sec) and volts/(meter/sec^2)) and angular (volts/(radian/sec) and
+  // // volts/(radian/sec^2)) cases. 
+  // // The Kv and Ka constants are found using the FRC Characterization toolsuite.
+  // // 
+  // // The plant holds a state-space model of our drivetrain. This system has the following properties:
+  // // 
+  // // State is: [left velocity, right velocity]
+  // // Inputs are [left voltage, right voltage]
+  // // Outputs are [left velocity, right velocity].
   
-  private final LinearSystem<N2, N2, N2> m_drivetrainPlant =
-      LinearSystemId.identifyDrivetrainSystem(Constants.DriveConstants.kvVoltSecondsPerMeter, 
-                                              Constants.DriveConstants.kaVoltSecondsSquaredPerMeter, 
-                                              Constants.DriveConstants.kvVoltSecondsPerRadian, 
-                                              Constants.DriveConstants.kaVoltSecondsSquaredPerRadian);
+  // private final LinearSystem<N2, N2, N2> DriveConstants.kDrivetrainPlant =
+  //     LinearSystemId.identifyDrivetrainSystem(Constants.DriveConstants.kvVoltSecondsPerMeter, 
+  //                                             Constants.DriveConstants.kaVoltSecondsSquaredPerMeter, 
+  //                                             Constants.DriveConstants.kvVoltSecondsPerRadian, 
+  //                                             Constants.DriveConstants.kaVoltSecondsSquaredPerRadian);
 
   
   // Used to put data onto Shuffleboard
@@ -79,22 +80,22 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void showLinearSystem() {
-    driveTab.add("A1", m_drivetrainPlant.getA(0,0))
+    driveTab.add("A1", DriveConstants.kDrivetrainPlant.getA(0,0))
       .withPosition(0, 1);
-    driveTab.add("A2", m_drivetrainPlant.getA(0,1))
+    driveTab.add("A2", DriveConstants.kDrivetrainPlant.getA(0,1))
       .withPosition(1, 1); 
-    driveTab.add("A3", m_drivetrainPlant.getA(1,0))
+    driveTab.add("A3", DriveConstants.kDrivetrainPlant.getA(1,0))
       .withPosition(0, 2);
-    driveTab.add("A4", m_drivetrainPlant.getA(1,1))
+    driveTab.add("A4", DriveConstants.kDrivetrainPlant.getA(1,1))
       .withPosition(1, 2);   
         
-    driveTab.add("B1", m_drivetrainPlant.getB(0,0))
+    driveTab.add("B1", DriveConstants.kDrivetrainPlant.getB(0,0))
       .withPosition(0, 4);
-    driveTab.add("B2", m_drivetrainPlant.getB(0,1))
+    driveTab.add("B2", DriveConstants.kDrivetrainPlant.getB(0,1))
       .withPosition(1, 4); 
-    driveTab.add("B3", m_drivetrainPlant.getB(1,0))
+    driveTab.add("B3", DriveConstants.kDrivetrainPlant.getB(1,0))
       .withPosition(0, 5);
-    driveTab.add("B4", m_drivetrainPlant.getB(1,1))
+    driveTab.add("B4", DriveConstants.kDrivetrainPlant.getB(1,1))
       .withPosition(1, 5);     
   }
 
@@ -215,7 +216,7 @@ public class Drivetrain extends SubsystemBase {
    * @return The drivetrain plant
    */
   public LinearSystem<N2, N2, N2> getPlant() {
-    return m_drivetrainPlant;
+    return DriveConstants.kDrivetrainPlant;
   }
 
   @Override

@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Drivetrain extends SubsystemBase {
   private static final double kCountsPerRevolution = 1440.0;
@@ -41,6 +44,14 @@ public class Drivetrain extends SubsystemBase {
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
+
+  // public final DifferentialDriveVoltageConstraint autoVoltageConstraint =
+  //       new DifferentialDriveVoltageConstraint(
+  //           new SimpleMotorFeedforward(DriveConstants.ksVolts, 
+  //                                      DriveConstants.kvVoltSecondsPerMeter, 
+  //                                      DriveConstants.kaVoltSecondsSquaredPerMeter),
+  //           DriveConstants.kDriveKinematics,
+  //           10);
 
   // Also show a field diagram
   private final Field2d m_field2d = new Field2d();

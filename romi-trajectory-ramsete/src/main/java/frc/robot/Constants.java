@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -36,6 +39,22 @@ public final class Constants {
     // The linear acceleration gain, volts per (meter per second squared).
     public static final double kaVoltSecondsSquaredPerMeter = 0.0737;
 
+    // Setup constraints for feedforward and kinematics
+    public static final DifferentialDriveVoltageConstraint kAutoVoltageConstraint =
+      new DifferentialDriveVoltageConstraint(
+          new SimpleMotorFeedforward(ksVolts, 
+                                      kvVoltSecondsPerMeter, 
+                                      kaVoltSecondsSquaredPerMeter),
+          kDriveKinematics,
+          10);
+
+    // Setup trajectory constraints
+    public static final TrajectoryConfig kTrajectoryConfig =
+      new TrajectoryConfig(kMaxSpeedMetersPerSecond, 
+                           kMaxAccelMetersPerSecondSquared)
+          .setKinematics(kDriveKinematics)
+          .addConstraint(kAutoVoltageConstraint);
+
     // For distances PID
     public static final double kPDriveVel = 3.2;
     public static final double kIDriveVel = 0;
@@ -45,7 +64,7 @@ public final class Constants {
 
   }
 
-  public static final class AutoConstants {
+  public static final class ControlConstants {
     
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds

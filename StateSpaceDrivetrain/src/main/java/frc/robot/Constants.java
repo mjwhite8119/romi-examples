@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
+import edu.wpi.first.wpiutil.math.numbers.N2;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -49,7 +52,22 @@ public final class Constants {
         public static final double kDDriveVel = 0;
         // public static final double kPDriveVel = 0.085;
         // public static final double kPDriveVel = 0.141;
-        
+
+        // Identify a standard differential drive drivetrain, given the drivetrain's kV and kA in both
+        // linear (volts/(meter/sec) and volts/(meter/sec^2)) and angular (volts/(radian/sec) and
+        // volts/(radian/sec^2)) cases. 
+        // The Kv and Ka constants are found using the FRC Characterization toolsuite.
+        // 
+        // The plant holds a state-space model of our drivetrain. This system has the following properties:
+        // 
+        // State is: [left velocity, right velocity]
+        // Inputs are [left voltage, right voltage]
+        // Outputs are [left velocity, right velocity].       
+        public static final LinearSystem<N2, N2, N2> kDrivetrainPlant =
+            LinearSystemId.identifyDrivetrainSystem(kvVoltSecondsPerMeter, 
+                                                    kaVoltSecondsSquaredPerMeter, 
+                                                    kvVoltSecondsPerRadian, 
+                                                    kaVoltSecondsSquaredPerRadian);       
     }
 
     public static final class ControlConstants {
