@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.ArcadeDrive;
@@ -26,9 +29,7 @@ import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -67,37 +68,26 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    setupShuffleboard();
   }
 
   /**
-   * Generate a trajectory following Ramsete command
-   * 
-   * This is very similar to the WPILib RamseteCommand example. It uses
-   * constants defined in the Constants.java file. These constants were 
-   * found empirically by using the frc-characterization tool.
-   * 
-   * @return A SequentialCommand that sets up and executes a trajectory following Ramsete command
+   * Setup Shuffleboard
+   *
    */
-  private Command generateRamseteCommand() {
-    var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(DriveConstants.ksVolts, 
-                                       DriveConstants.kvVoltSecondsPerMeter, 
-                                       DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
-            10);
+  private void setupShuffleboard() {
 
-    TrajectoryConfig config =
-        new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond, 
-                             DriveConstants.kMaxAccelMetersPerSecondSquared)
-            .setKinematics(DriveConstants.kDriveKinematics)
-            .addConstraint(autoVoltageConstraint);
+    // Create a tab for the Drivetrain
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
-    // This trajectory can be modified to suit your purposes
+    
+  }
+
+  public Trajectory navigateConesTrajectory() {
     // Note that all coordinates are in meters, and follow NWU conventions.
     // If you would like to specify coordinates in inches (which might be easier
     // to deal with for the Romi), you can use the Units.inchesToMeters() method
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
@@ -111,10 +101,43 @@ public class RobotContainer {
             new Translation2d(0.75, -1.0)   // 8 Right
         ),
         new Pose2d(-0.0, -0.30, new Rotation2d(Math.PI)),
-        config);
+        DriveConstants.kTrajectoryConfig);
 
+    return trajectory;
+  }
+
+  public Trajectory driveSquareTrajectory() {
+    // Note that all coordinates are in meters, and follow NWU conventions.
+    // If you would like to specify coordinates in inches (which might be easier
+    // to deal with for the Romi), you can use the Units.inchesToMeters() method
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            new Translation2d(0.5, 0.25), // left  
+            new Translation2d(1.0, -0.25), // right 
+            new Translation2d(1.5, 0) // forward           
+        ),
+        new Pose2d(0.0, 0.0, new Rotation2d(Math.PI)),
+        DriveConstants.kTrajectoryConfig);
+
+    return trajectory;
+  }
+  
+
+  /**
+   * Generate a trajectory following Ramsete command
+   * 
+   * This is very similar to the WPILib RamseteCommand example. It uses
+   * constants defined in the Constants.java file. These constants were 
+   * found empirically by using the frc-characterization tool.
+   * 
+   * @return A SequentialCommand that sets up and executes a trajectory following Ramsete command
+   */
+  private Command generateRamseteCommand(Trajectory trajectory) {
+    
     RamseteCommand ramseteCommand = new RamseteCommand(
-        exampleTrajectory,
+        trajectory,
         m_drivetrain::getPose,
         new RamseteController(ControlConstants.kRamseteB, ControlConstants.kRamseteZeta),
         new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter, DriveConstants.kaVoltSecondsSquaredPerMeter),
@@ -125,11 +148,11 @@ public class RobotContainer {
         m_drivetrain::tankDriveVolts,
         m_drivetrain);
 
-    m_drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+    m_drivetrain.resetOdometry(trajectory.getInitialPose());
 
     // Set up a sequence of commands
     // First, we want to reset the drivetrain odometry
-    return new InstantCommand(() -> m_drivetrain.resetOdometry(exampleTrajectory.getInitialPose()), m_drivetrain)
+    return new InstantCommand(() -> m_drivetrain.resetOdometry(trajectory.getInitialPose()), m_drivetrain)
         // next, we run the actual ramsete command
         .andThen(ramseteCommand)
 
@@ -155,7 +178,8 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Ramsete Trajectory", generateRamseteCommand());
+    m_chooser.setDefaultOption("Drive Square Trajectory", generateRamseteCommand(driveSquareTrajectory()));
+    m_chooser.addOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
     m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     
