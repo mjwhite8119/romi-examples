@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
@@ -17,9 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -42,14 +38,6 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
 
-  // Used to put data onto Shuffleboard
-  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-  private NetworkTableEntry m_heading = 
-    driveTab.add("Current Heading", 0)
-      .withPosition(5, 3)
-      .withWidget(BuiltInWidgets.kGraph)
-      .getEntry();
-      
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
 
@@ -95,16 +83,16 @@ public class Drivetrain extends SubsystemBase {
     return m_rightEncoder.get();
   }
 
-  public double getLeftDistance() {
+  public double getLeftDistanceMeters() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistance() {
+  public double getRightDistanceMeters() {
     return m_rightEncoder.getDistance();
   }
 
   public double getAverageDistanceMeters() {
-    return (getLeftDistance() + getRightDistance()) / 2.0;
+    return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2.0;
   }
 
   /**
@@ -166,6 +154,15 @@ public class Drivetrain extends SubsystemBase {
     m_gyro.reset();
   }
 
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    
+    // Also update the Field2D object (so that we can visualize this in sim)
+    m_field2d.setRobotPose(getPose());
+  }
+
   /**
    * Returns the currently estimated pose of the robot.
    * @return The pose
@@ -221,12 +218,4 @@ public class Drivetrain extends SubsystemBase {
   public double getTurnRate() {
     return -m_gyro.getRate();
   }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    m_heading.setDouble(getHeading());
-    SmartDashboard.putNumber("Position", getAverageDistanceMeters());
-  }
-
 }

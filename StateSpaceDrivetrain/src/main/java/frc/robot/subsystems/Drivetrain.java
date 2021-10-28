@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
@@ -19,6 +21,8 @@ import edu.wpi.first.wpiutil.math.numbers.N2;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.system.LinearSystem;
 
 public class Drivetrain extends SubsystemBase {
@@ -42,6 +46,12 @@ public class Drivetrain extends SubsystemBase {
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
   
+  // Odometry class for tracking robot pose
+  private final DifferentialDriveOdometry m_odometry;
+  
+  // Also show a field diagram
+  private final Field2d m_field2d = new Field2d();
+  
   // Used to put data onto Shuffleboard
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
 
@@ -54,9 +64,13 @@ public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeter) / Constants.DriveConstants.kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * Constants.DriveConstants.kWheelDiameterMeter) / Constants.DriveConstants.kCountsPerRevolution);
+    m_leftEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeter) / DriveConstants.kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeter) / DriveConstants.kCountsPerRevolution);
     resetEncoders();
+
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+    SmartDashboard.putData("field", m_field2d);
+    
     showLinearSystem();
   }
 
@@ -119,16 +133,16 @@ public class Drivetrain extends SubsystemBase {
     return m_rightEncoder.getRate();
   }
 
-  public double getLeftDistanceMeter() {
+  public double getLeftDistanceMeters() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistanceMeter() {
+  public double getRightDistanceMeters() {
     return m_rightEncoder.getDistance();
   }
 
   public double getAverageDistanceMeter() {
-    return (getLeftDistanceMeter() + getRightDistanceMeter()) / 2.0;
+    return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2.0;
   }
 
   /**
@@ -190,6 +204,23 @@ public class Drivetrain extends SubsystemBase {
     m_gyro.reset();
   }
 
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    
+    // Also update the Field2D object (so that we can visualize this in sim)
+    m_field2d.setRobotPose(getPose());
+  }
+
+  /**
+   * Returns the currently estimated pose of the robot.
+   * @return The pose
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+  
   /**
    * Return the State Space representation of this drivetrain
    * referred to as the Plant in control theory.
@@ -200,8 +231,4 @@ public class Drivetrain extends SubsystemBase {
     return DriveConstants.kDrivetrainPlant;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 }

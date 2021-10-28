@@ -21,6 +21,7 @@ public class RomiGyro implements Gyro {
   private double m_angleYOffset;
   private double m_angleZOffset;
 
+  // Needed for interface requirements
   private SimDevice m_gyroSimDevice;
 
   /** Create a new RomiGyro. */
@@ -125,6 +126,7 @@ public class RomiGyro implements Gyro {
     }
   }
 
+  // These methods added to satisfy the interface requirements
   @Override
   public void close() throws Exception {
     if (m_gyroSimDevice != null) {
