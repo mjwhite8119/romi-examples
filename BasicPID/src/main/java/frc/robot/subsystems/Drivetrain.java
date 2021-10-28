@@ -193,13 +193,28 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  /**
+   * Resets the odometry to the specified pose
+   * @param pose The pose to which to set the odometry
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+  }
+
+  /**
+   * Zeroes the heading of the robot
+   */
+  public void zeroHeading() {
+    m_gyro.reset();
+  }
+
   public double getHeading() {
-    // double leftDistance = Math.abs(getLeftDistance());
-    // double rightDistance = Math.abs(getRightDistance());
-    // double heading = Math.toDegrees((leftDistance + rightDistance) / 2.0);
-    double angle = getGyroAngleZ();
-    double rotations = Math.round(angle/360);
-    double heading = angle - (rotations*360);
+    
+    // double angle = getGyroAngleZ();
+    // double rotations = Math.round(angle/360);
+    // double heading = angle - (rotations*360);
+    double heading = m_gyro.getRotation2d().getDegrees();
     return heading;
   }
 

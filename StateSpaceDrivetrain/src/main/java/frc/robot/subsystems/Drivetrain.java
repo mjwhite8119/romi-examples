@@ -222,6 +222,22 @@ public class Drivetrain extends SubsystemBase {
   }
   
   /**
+   * Resets the odometry to the specified pose
+   * @param pose The pose to which to set the odometry
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+  }
+
+  /**
+   * Zeroes the heading of the robot
+   */
+  public void zeroHeading() {
+    m_gyro.reset();
+  }
+  
+  /**
    * Return the State Space representation of this drivetrain
    * referred to as the Plant in control theory.
    *
