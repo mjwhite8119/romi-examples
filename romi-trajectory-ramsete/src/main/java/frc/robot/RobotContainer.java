@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
@@ -88,8 +87,8 @@ public class RobotContainer {
             10);
 
     TrajectoryConfig config =
-        new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond, 
-                             AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond, 
+                             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
             .setKinematics(DriveConstants.kDriveKinematics)
             .addConstraint(autoVoltageConstraint);
 
@@ -116,7 +115,7 @@ public class RobotContainer {
     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
         m_drivetrain::getPose,
-        new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+        new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
         new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter, DriveConstants.kaVoltSecondsSquaredPerMeter),
         DriveConstants.kDriveKinematics,
         m_drivetrain::getWheelSpeeds,
