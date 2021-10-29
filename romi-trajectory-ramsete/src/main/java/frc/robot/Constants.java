@@ -40,7 +40,8 @@ public final class Constants {
     // The linear inertia gain, volts
     public static final double ksVolts = 0.461;
     // The linear velocity gain, volts per (meter per second)
-    public static final double kvVoltSecondsPerMeter = 7.33 - 0.5;
+    // Increase this if you drive short
+    public static final double kvVoltSecondsPerMeter = 6.93;
     // public static final double kvVoltSecondsPerMeter = 9.7;
     // The linear acceleration gain, volts per (meter per second squared).
     public static final double kaVoltSecondsSquaredPerMeter = 0.0737;

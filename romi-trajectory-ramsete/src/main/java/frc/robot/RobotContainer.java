@@ -82,10 +82,33 @@ public class RobotContainer {
     
   }
 
+  /**
+   * Drives a straight line 2 meters so as you can calibrate your Romi
+   * You should make sure that the robot ends up right on the 2 meter mark.
+   *
+   */
+  public Trajectory calibrateTrajectory() {
+    
+    // Note that all coordinates are in meters, and follow NWU conventions.
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            new Translation2d(1.0, 0.0) 
+        ),
+        new Pose2d(2.0, 0.0, new Rotation2d(0)), // left
+        DriveConstants.kTrajectoryConfig);
+
+    return trajectory;
+  }
+
+  /**
+   * Navigates three cone placed 0.5 meters apart.
+   * It should end up back at its starting point
+   *
+   */
   public Trajectory navigateConesTrajectory() {
     // Note that all coordinates are in meters, and follow NWU conventions.
-    // If you would like to specify coordinates in inches (which might be easier
-    // to deal with for the Romi), you can use the Units.inchesToMeters() method
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
@@ -105,13 +128,12 @@ public class RobotContainer {
     return trajectory;
   }
 
-  public Trajectory driveSquareTrajectory() {
-    
-    // SmartDashboard.putNumber("Feedforword", DriveConstants.kFeedForward.maxAchievableVelocity(7.0, DriveConstants.kMaxAccelMetersPerSecondSquared));
-
+  /**
+   * Drives a 0.5 meter square trajectory. 
+   *
+   */
+  public Trajectory driveSquareTrajectory() {   
     // Note that all coordinates are in meters, and follow NWU conventions.
-    // If you would like to specify coordinates in inches (which might be easier
-    // to deal with for the Romi), you can use the Units.inchesToMeters() method
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
@@ -182,8 +204,7 @@ public class RobotContainer {
     
     m_chooser.setDefaultOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
     m_chooser.addOption("Drive Square Trajectory", generateRamseteCommand(driveSquareTrajectory()));
-    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    m_chooser.addOption("Calibrate Trajectory", generateRamseteCommand(calibrateTrajectory()));
     
     SmartDashboard.putData(m_chooser);
   }
