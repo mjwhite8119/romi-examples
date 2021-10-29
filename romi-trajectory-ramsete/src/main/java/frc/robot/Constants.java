@@ -29,23 +29,31 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthMeters);
 
+    // Calibration for the right wheel voltage because it's much slower
+    // than the left wheel on this robot.
+    public static final double rightVoltsGain = 1.094;
+
     // Dynamical constants
-    public static final double kMaxSpeedMetersPerSecond = 0.8;
-    public static final double kMaxAccelMetersPerSecondSquared = 0.8;
+    public static final double kMaxSpeedMetersPerSecond = 0.5;
+    public static final double kMaxAccelMetersPerSecondSquared = 0.5;
 
     // The linear inertia gain, volts
-    public static final double ksVolts = 0.929;
+    public static final double ksVolts = 0.461;
     // The linear velocity gain, volts per (meter per second)
-    public static final double kvVoltSecondsPerMeter = 6.33;
+    public static final double kvVoltSecondsPerMeter = 7.33 - 0.5;
+    // public static final double kvVoltSecondsPerMeter = 9.7;
     // The linear acceleration gain, volts per (meter per second squared).
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0389;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0737;
 
     // Setup constraints for feedforward and kinematics
+    public static final SimpleMotorFeedforward kFeedForward = 
+      new SimpleMotorFeedforward(ksVolts, 
+                                kvVoltSecondsPerMeter, 
+                                kaVoltSecondsSquaredPerMeter);
+
     public static final DifferentialDriveVoltageConstraint kAutoVoltageConstraint =
       new DifferentialDriveVoltageConstraint(
-          new SimpleMotorFeedforward(ksVolts, 
-                                      kvVoltSecondsPerMeter, 
-                                      kaVoltSecondsSquaredPerMeter),
+          kFeedForward,
           kDriveKinematics,
           10);
 
@@ -60,8 +68,8 @@ public final class Constants {
     // public static final double kPDriveVel = 3.2;
     public static final double kIDriveVel = 0;
     public static final double kDDriveVel = 0;
-    public static final double kPDriveVel = 0.085;
-    // public static final double kPDriveVel = 0.141;
+    // public static final double kPDriveVel = 0.085;
+    public static final double kPDriveVel = 0.125;
 
   }
 

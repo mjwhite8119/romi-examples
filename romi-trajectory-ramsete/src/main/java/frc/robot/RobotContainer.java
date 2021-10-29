@@ -29,9 +29,7 @@ import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -93,21 +91,24 @@ public class RobotContainer {
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
             new Translation2d(0.5, 0.25), // 1 Left
-            new Translation2d(1.0, -0.5), // 2 Right
-            new Translation2d(1.4, 0.5),  // 3 Left
-            new Translation2d(2.5, 0.0),  // 4 Center
-            new Translation2d(1.8, -0.25), // 5  Right        
-            new Translation2d(1.4, 0.25),  // 6 Left
-            new Translation2d(1.1, 0.1),   // 7 Left
-            new Translation2d(0.75, -1.0)   // 8 Right
+            new Translation2d(1.0, -0.25), // 2 Right
+            new Translation2d(1.5, 0.25),  // 3 Left
+            new Translation2d(2.0, 0.0),  // 4 Center
+            new Translation2d(1.5, -0.25), // 5  Right        
+            new Translation2d(1.0, 0.25),  // 6 Left
+            new Translation2d(0.7, -0.25)   // 7 Left
+            // new Translation2d(0.4, -0.20) 
         ),
-        new Pose2d(-0.0, -0.30, new Rotation2d(Math.PI)),
+        new Pose2d(-0.0, -0.2, new Rotation2d(Math.PI)),
         DriveConstants.kTrajectoryConfig);
 
     return trajectory;
   }
 
   public Trajectory driveSquareTrajectory() {
+    
+    // SmartDashboard.putNumber("Feedforword", DriveConstants.kFeedForward.maxAchievableVelocity(7.0, DriveConstants.kMaxAccelMetersPerSecondSquared));
+
     // Note that all coordinates are in meters, and follow NWU conventions.
     // If you would like to specify coordinates in inches (which might be easier
     // to deal with for the Romi), you can use the Units.inchesToMeters() method
@@ -115,11 +116,11 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(0.5, 0.25), // left  
-            new Translation2d(1.0, -0.25), // right 
-            new Translation2d(1.5, 0) // forward           
+            new Translation2d(0.5, 0.0), // forward 
+            new Translation2d(0.5, 0.5), // right 
+            new Translation2d(0.0, 0.5) // back           
         ),
-        new Pose2d(0.0, 0.0, new Rotation2d(Math.PI)),
+        new Pose2d(0.0, 0.0, new Rotation2d(0)), // left
         DriveConstants.kTrajectoryConfig);
 
     return trajectory;
@@ -178,8 +179,9 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Drive Square Trajectory", generateRamseteCommand(driveSquareTrajectory()));
-    m_chooser.addOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
+    
+    m_chooser.setDefaultOption("Navigate Cones Trajectory", generateRamseteCommand(navigateConesTrajectory()));
+    m_chooser.addOption("Drive Square Trajectory", generateRamseteCommand(driveSquareTrajectory()));
     m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
     

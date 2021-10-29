@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
@@ -11,6 +12,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
@@ -44,6 +48,21 @@ public class Drivetrain extends SubsystemBase {
   // Also show a field diagram
   private final Field2d m_field2d = new Field2d();
 
+  // Used to put data onto Shuffleboard
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+
+  private NetworkTableEntry m_leftVolts = 
+    driveTab.add("Left Volts", 0)
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(3, 3)
+      .getEntry(); 
+
+  private NetworkTableEntry m_rightVolts = 
+    driveTab.add("Right Volts", 0)
+      .withWidget(BuiltInWidgets.kGraph)
+      .withPosition(3, 3)
+      .getEntry();     
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
@@ -65,8 +84,12 @@ public class Drivetrain extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
+    
+    double rightVoltsCalibrated = rightVolts * DriveConstants.rightVoltsGain;
+    m_leftVolts.setDouble(leftVolts);
+    m_rightVolts.setDouble(rightVoltsCalibrated);
     m_leftMotor.setVoltage(leftVolts);
-    m_rightMotor.setVoltage(-rightVolts); // We invert this to maintain +ve = forward
+    m_rightMotor.setVoltage(-rightVoltsCalibrated); // We invert this to maintain +ve = forward
     m_diffDrive.feed();
   }
 
