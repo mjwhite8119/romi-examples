@@ -4,26 +4,23 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.estimator.DifferentialDrivePoseEstimator;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Transform2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+// Additional imports from romiReference
+import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MatBuilder;
 import edu.wpi.first.wpiutil.math.Nat;
 
@@ -63,21 +60,6 @@ public class Drivetrain extends SubsystemBase {
   // Show a field diagram for tracking Pose estimation
   private final Field2d m_estimatedField2d = new Field2d();
 
-  // Used to put data onto Shuffleboard
-  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-
-  private NetworkTableEntry m_leftVolts = 
-    driveTab.add("Left Volts", 0)
-      .withWidget(BuiltInWidgets.kGraph)
-      .withPosition(3, 3)
-      .getEntry(); 
-
-  private NetworkTableEntry m_rightVolts = 
-    driveTab.add("Right Volts", 0)
-      .withWidget(BuiltInWidgets.kGraph)
-      .withPosition(3, 3)
-      .getEntry();     
-
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // Use inches as unit for encoder distances
@@ -85,35 +67,16 @@ public class Drivetrain extends SubsystemBase {
     m_rightEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeters) / DriveConstants.kCountsPerRevolution);
     resetEncoders();
 
-    Pose2d initialPose = new Pose2d(0, 1.5, m_gyro.getRotation2d()); 
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), initialPose);
-    m_field2d.setRobotPose(initialPose);
+    // Setup Odometry
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
     SmartDashboard.putData("field", m_field2d);
+
+    // Setup Pose Estimator
     SmartDashboard.putData("fieldEstimate", m_estimatedField2d);
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
-  }
-
-  /**
-   * Controls the left and right sides of the drive directly with voltages.
-   * 
-   * @param leftVolts the commanded left output
-   * @param rightVolts the commanded right output
-   */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    
-    double rightVoltsCalibrated = rightVolts * DriveConstants.rightVoltsGain;
-
-    // Send to Network Tables
-    m_leftVolts.setDouble(leftVolts);
-    m_rightVolts.setDouble(rightVoltsCalibrated);
-
-    // Apply the voltage to the wheels
-    m_leftMotor.setVoltage(leftVolts);
-    m_rightMotor.setVoltage(-rightVoltsCalibrated); // We invert this to maintain +ve = forward
-    m_diffDrive.feed();
   }
 
   public void resetEncoders() {
@@ -220,10 +183,11 @@ public class Drivetrain extends SubsystemBase {
     // Update the odometry in the periodic block
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     
+    // Offset the pose to start 1.5 meters on the Y axis
+    Pose2d currentPose = getPose();
+    Pose2d poseOffset = new Pose2d(currentPose.getX(), currentPose.getY() + 1.5, currentPose.getRotation());
     // Update the Field2D object (so that we can visualize this in sim)
-    Pose2d poseOffset = getPose();
-    poseOffset.plus(new Transform2d(new Translation2d(0, 1.5), new Rotation2d()));
-    m_field2d.setRobotPose(getPose().plus(new Transform2d(new Translation2d(0, 1.5), new Rotation2d())));
+    m_field2d.setRobotPose(poseOffset);
 
     // Updates the the Unscented Kalman Filter using only wheel encoder information.
     m_estimator.update(m_gyro.getRotation2d(), 
@@ -231,9 +195,15 @@ public class Drivetrain extends SubsystemBase {
                        m_leftEncoder.getDistance(), 
                        m_rightEncoder.getDistance());
 
-    // Update the Field2D object (so that we can visualize this in sim)
-    m_estimatedField2d.setRobotPose(getEstimatedPose());
 
+    // Offset the pose to start 1.5 meters on the Y axis
+    Pose2d currentEstimatedPose = getEstimatedPose();
+    Pose2d estimatedPoseOffset = new Pose2d(currentEstimatedPose.getX(), 
+                                            currentEstimatedPose.getY() + 1.5, 
+                                            currentEstimatedPose.getRotation());
+
+    // Update the Field2D object (so that we can visualize this in sim)
+    m_estimatedField2d.setRobotPose(estimatedPoseOffset);
   }
 
   /**
@@ -250,31 +220,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public Pose2d getEstimatedPose() {
     return m_estimator.getEstimatedPosition();
-  }
-
-  /**
-   * Returns the current wheel speeds of the robot.
-   * @return The current wheel speeds
-   */
-  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
-  }
-
-  /**
-   * Resets the odometry to the specified pose
-   * @param pose The pose to which to set the odometry
-   */
-  public void resetOdometry(Pose2d pose) {
-    resetEncoders();
-    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
-  }
-
-  /**
-   * Sets the max output of the drive. Useful for scaling the drive to drive more slowly
-   * @param maxOutput The maximum output to which the drive will be constrained
-   */
-  public void setMaxOutput(double maxOutput) {
-    m_diffDrive.setMaxOutput(maxOutput);
   }
 
   /**
@@ -309,12 +254,13 @@ public class Drivetrain extends SubsystemBase {
   public double getRightEncoderRate() {
     return m_rightEncoder.getRate();
   }
-  
+
   /**
-   * Returns the turn rate of the robot
-   * @return The turn rate of the robot, in degrees per second
+   * Returns the current wheel speeds of the robot.
+   * @return The current wheel speeds
    */
-  public double getTurnRate() {
-    return -m_gyro.getRate();
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
   }
+
 }
