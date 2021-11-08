@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    // Physical constants
+
+    // -------- Physical Constants -----------------
     public static final double kCountsPerRevolution = 1440.0;
     public static final double kWheelDiameterMeters = 0.07;
     public static final double kMetersPerDegree = Math.PI * 0.141 / 360;
@@ -29,19 +30,6 @@ public final class Constants {
     // Calibration for the right wheel voltage because it's much slower
     // than the left wheel on this robot.
     public static final double rightVoltsGain = 1.094;
-
-    // Dynamical constants
-    public static final double kMaxSpeedMetersPerSecond = 0.5;
-    public static final double kMaxAccelMetersPerSecondSquared = 0.5;
-
-    // The linear inertia gain, volts
-    public static final double ksVolts = 0.461;
-    // The linear velocity gain, volts per (meter per second)
-    // Increase this if you drive short
-    public static final double kvVoltSecondsPerMeter = 6.93;
-    // public static final double kvVoltSecondsPerMeter = 9.7;
-    // The linear acceleration gain, volts per (meter per second squared).
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0737;
 
   }
 }

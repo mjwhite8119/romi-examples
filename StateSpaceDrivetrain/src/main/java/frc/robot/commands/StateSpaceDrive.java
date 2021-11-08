@@ -13,6 +13,7 @@ import edu.wpi.first.wpiutil.math.Matrix;
 import edu.wpi.first.wpiutil.math.Nat;
 import edu.wpi.first.wpiutil.math.VecBuilder;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpiutil.math.numbers.N2;
@@ -140,7 +141,7 @@ public class StateSpaceDrive extends CommandBase {
     double nextLeftVoltage = m_loop.getU(0);
     double nextRightVoltage = m_loop.getU(1);
     m_drive.setLeftVoltage(nextLeftVoltage);
-    m_drive.setRightVoltage(-nextRightVoltage);
+    m_drive.setRightVoltage(-nextRightVoltage * DriveConstants.rightVoltsGain);
 
     // Put feedforward on Shuffleboard
     double ff = m_loop.getFeedforward().getUff(0);

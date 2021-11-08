@@ -15,12 +15,12 @@ import edu.wpi.first.networktables.NetworkTable;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurnDegreesPID extends PIDCommand {
+public class TurnToAnglePID extends PIDCommand {
   /** Creates a new TurnToAngle. */
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
 
-  public TurnDegreesPID(double targetAngleDegrees, Drivetrain drive) {
+  public TurnToAnglePID(double targetAngleDegrees, Drivetrain drive) {
     super(
         // The controller that the command will use
         new PIDController(DriveConstants.kPTurnVel,
@@ -36,7 +36,7 @@ public class TurnDegreesPID extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          drive.turn(output/100);
+          drive.turn(-output,0,0);
         },
         // Use addRequirements() here to declare subsystem dependencies.
         drive);
@@ -50,15 +50,15 @@ public class TurnDegreesPID extends PIDCommand {
   public void initialize() {
     super.initialize();
     // Override PID parameters from Shuffleboard
-    getController().setP(table.getEntry("anglekP").getDouble(1.0));
-    getController().setD(table.getEntry("anglekD").getDouble(0.0));
+    getController().setP(table.getEntry("anglekP").getDouble(DriveConstants.kPTurnVel));
+    getController().setD(table.getEntry("anglekD").getDouble(DriveConstants.kDTurnVel));
   }
 
   public void execute() {
     super.execute(); 
     SmartDashboard.putNumber("(deg.) setpoint", getController().getSetpoint());
     SmartDashboard.putNumber("(deg.) Pos. Error", getController().getPositionError());
-    SmartDashboard.putNumber("(deg.) Vel. Error", getController().getVelocityError());
+    // SmartDashboard.putNumber("(deg.) Vel. Error", getController().getVelocityError());
     SmartDashboard.putBoolean("(deg.) atSetpoint", getController().atSetpoint());
   }
 

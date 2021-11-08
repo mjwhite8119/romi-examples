@@ -17,6 +17,7 @@ import frc.robot.subsystems.Drivetrain;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveDistancePID extends PIDCommand {
   /** Creates a new DriveDistancePID. */
+  private static Drivetrain m_drive;
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
   
@@ -33,7 +34,7 @@ public class DriveDistancePID extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          drive.steer(output/10);
+          drive.steer(output);
         },
         // Use addRequirements() here to declare subsystem dependencies.
         drive);
@@ -41,6 +42,8 @@ public class DriveDistancePID extends PIDCommand {
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(DriveConstants.kDistanceToleranceMeters,
                                 DriveConstants.kVelocityToleranceMetersPerS);
+
+    m_drive = drive;
   }
 
   public void initialize() {
@@ -53,7 +56,6 @@ public class DriveDistancePID extends PIDCommand {
   
 
   public void execute() {
-    // TODO Auto-generated method stub
     super.execute();
     SmartDashboard.putNumber("Error", getController().getPositionError());
     SmartDashboard.putBoolean("Finished", getController().atSetpoint());
@@ -63,5 +65,11 @@ public class DriveDistancePID extends PIDCommand {
   @Override
   public boolean isFinished() {
     return getController().atSetpoint();
+  }
+
+  public void resetOdometry() {
+    m_drive.arcadeDrive(0, 0);
+    m_drive.resetGyro();
+    m_drive.resetEncoders();
   }
 }

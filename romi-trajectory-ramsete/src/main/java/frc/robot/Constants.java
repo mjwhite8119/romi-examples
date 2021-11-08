@@ -21,7 +21,8 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
  */
 public final class Constants {
   public static final class DriveConstants {
-    // Physical constants
+
+    // -------- Physical Constants -----------------
     public static final double kCountsPerRevolution = 1440.0;
     public static final double kWheelDiameterMeters = 0.07;
     public static final double kMetersPerDegree = Math.PI * 0.141 / 360;
@@ -33,7 +34,9 @@ public final class Constants {
     // than the left wheel on this robot.
     public static final double rightVoltsGain = 1.094;
 
-    // Dynamical constants
+    // -------- Dynamical constants --------------------
+
+    // Max speed and acceleration of the robot
     public static final double kMaxSpeedMetersPerSecond = 0.5;
     public static final double kMaxAccelMetersPerSecondSquared = 0.5;
 
@@ -58,6 +61,8 @@ public final class Constants {
           kDriveKinematics,
           10);
 
+    // -------- Trajectory constants --------------------
+
     // Setup trajectory constraints
     public static final TrajectoryConfig kTrajectoryConfig =
       new TrajectoryConfig(kMaxSpeedMetersPerSecond, 
@@ -65,13 +70,13 @@ public final class Constants {
           .setKinematics(kDriveKinematics)
           .addConstraint(kAutoVoltageConstraint);
 
-    // For distances PID
-    // public static final double kPDriveVel = 3.2;
+    // -------- PID constants --------------------
+    public static final double kPDriveVel = 0.125;
     public static final double kIDriveVel = 0;
     public static final double kDDriveVel = 0;
-    // public static final double kPDriveVel = 0.085;
-    public static final double kPDriveVel = 0.125;
 
+    public static final double kPDriveVelLeft = 0.125;
+    public static final double kPDriveVelRight = 0.125;
   }
 
   public static final class ControlConstants {

@@ -18,6 +18,11 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousPIDDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.DriveDistancePID;
+import frc.robot.commands.DriveDistanceProfiled;
+import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.TurnToAnglePID;
+import frc.robot.commands.TurnToAngleProfiled;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -88,9 +93,12 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto PID Distance", new AutonomousPIDDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    m_chooser.setDefaultOption("Profiled Turn Angle PID", new TurnToAngleProfiled(90, m_drivetrain));
+    m_chooser.addOption("Drive Distance PID", new DriveDistancePID(1.0, m_drivetrain));
+    m_chooser.addOption("Profiled Distance PID", new DriveDistanceProfiled(1.0, m_drivetrain));
+    m_chooser.addOption("Turn Degrees PID", new TurnToAnglePID(90, m_drivetrain));
+    m_chooser.addOption("Drive Square", new AutonomousPIDDistance(m_drivetrain));   
+    m_chooser.addOption("Reset Odometry", new ResetOdometry(m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 

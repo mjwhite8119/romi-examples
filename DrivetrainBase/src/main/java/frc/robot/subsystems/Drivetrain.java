@@ -60,7 +60,14 @@ public class Drivetrain extends SubsystemBase {
   // Show a field diagram for tracking Pose estimation
   private final Field2d m_estimatedField2d = new Field2d();
 
-  /** Creates a new Drivetrain. */
+  // Create a slew rate filter to give more control over the speed from the joystick
+  private final SlewRateLimiter m_filter = new SlewRateLimiter(0.5);
+  private final SlewRateLimiter m_filter_turn = new SlewRateLimiter(0.5);
+
+  /*********************************
+   * Creates a new Drivetrain.
+   * 
+  */
   public Drivetrain() {
     // Use inches as unit for encoder distances
     m_leftEncoder.setDistancePerPulse((Math.PI * DriveConstants.kWheelDiameterMeters) / DriveConstants.kCountsPerRevolution);
@@ -77,6 +84,10 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+
+  public void rateLimitedArcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    m_diffDrive.arcadeDrive(m_filter.calculate(xaxisSpeed), m_filter_turn.calculate(zaxisRotate));
   }
 
   public void resetEncoders() {

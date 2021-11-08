@@ -29,6 +29,10 @@ public final class Constants {
         public static final DifferentialDriveKinematics kDriveKinematics =
             new DifferentialDriveKinematics(kTrackwidthMeters);
 
+        // Calibration for the right wheel voltage because it's much slower
+        // than the left wheel on this robot.
+        public static final double rightVoltsGain = 1.094;
+
         // Dynamical constants
         public static final double kMaxSpeedMetersPerSecond = 0.5;
         public static final double kMaxAccelMetersPerSecondSquared = 0.5;

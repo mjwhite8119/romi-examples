@@ -5,8 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
@@ -34,9 +32,6 @@ public class RobotContainer {
   // Assumes a gamepad plugged into channnel 0
   // private final Joystick m_joystick = new Joystick(0);
   private final XboxController m_joystick = new XboxController(0);
-
-  // Create a slew rate filter to give more control over the speed from the joystick
-  private final SlewRateLimiter m_filter = new SlewRateLimiter(0.5);
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();

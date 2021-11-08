@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.networktables.NetworkTable;
@@ -19,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveDistanceProfiled extends ProfiledPIDCommand {
   /** Creates a new DriveDistanceProfiled. */
+  private static Drivetrain m_drive;
   private static NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private static NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
   
@@ -26,34 +26,42 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
-            // The PID gains
+            // The PID gains and motion profile constraints
             DriveConstants.kPDriveVel,
             DriveConstants.kIDriveVel,
             DriveConstants.kDDriveVel,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(Constants.DriveConstants.kMaxSpeedMetersPerSecond,
-                                            Constants.DriveConstants.kMaxAccelMetersPerSecondSquared)),
-        // This should return the measurement
+            DriveConstants.kTrapezoidProfileConstraints),
+
+        // The measurement coming from the sensors
         drive::getAverageDistanceMeters,
-        // This should return the goal (can also be a constant)
+
+        // The goal (can also be a constant)
         () -> new TrapezoidProfile.State(targetDistance,0),
-        // This uses the output
+
+        // Use the calculated velocity at each setpoint
         (output, setpoint) -> {
-          // Use the output (and setpoint, if desired) here
-          drive.steer(output);
+          drive.steerVelocity(setpoint.velocity);
         },
-        // Use addRequirements() here to declare subsystem dependencies.
+
+        // Declare subsystem dependencies.
         drive);
+
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(DriveConstants.kDistanceToleranceMeters,
-                                DriveConstants.kVelocityToleranceMetersPerS);
+                                 DriveConstants.kVelocityToleranceMetersPerS);
+
+    m_drive = drive;
   }
 
   public void initialize() {
     super.initialize();
+
+    // Reset the Odometry
+    // m_drive.resetEncoders();
+
     // Override PID parameters from Shuffleboard
-    getController().setP(table.getEntry("kP").getDouble(1.0));
-    getController().setD(table.getEntry("kD").getDouble(0.0));
+    getController().setP(table.getEntry("kP").getDouble(DriveConstants.kPDriveVel));
+    getController().setD(table.getEntry("kD").getDouble(DriveConstants.kDDriveVel));
   }
 
   public void execute() {

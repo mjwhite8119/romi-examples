@@ -164,11 +164,12 @@ public class RobotContainer {
         exampleTrajectory,
         m_drivetrain::getPose,
         new RamseteController(ControlConstants.kRamseteB, ControlConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter, DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveConstants.kFeedForward,
+        // new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter, DriveConstants.kaVoltSecondsSquaredPerMeter),
         DriveConstants.kDriveKinematics,
         m_drivetrain::getWheelSpeeds,
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
+        new PIDController(DriveConstants.kPDriveVelLeft, 0, 0),
+        new PIDController(DriveConstants.kPDriveVelRight, 0, 0),
         m_drivetrain::tankDriveVolts,
         m_drivetrain);
 
