@@ -8,7 +8,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -32,8 +33,8 @@ public class PIDLineFollow extends CommandBase {
     @Override
     public void execute() {
         
-        double error = Constants.Vision.SETPOINT - m_vision.getCenterX();
-        double turn = error * Constants.Drive.KP;
+        double error = VisionConstants.SETPOINT - m_vision.getCenterX();
+        double turn = error * DriveConstants.kPDriveVel;
         System.out.println("Error " + error); 
         System.out.println("Turn " + turn);
 
@@ -51,11 +52,11 @@ public class PIDLineFollow extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.stop();
+        m_drive.arcadeDrive(0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        return m_vision.getRectHeight() < Constants.Vision.END_OF_LINE;
+        return m_vision.getRectHeight() < VisionConstants.END_OF_LINE;
     }
 }

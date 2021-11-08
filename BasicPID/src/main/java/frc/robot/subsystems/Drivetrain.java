@@ -7,9 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.sensors.RomiGyro;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MatBuilder;
 import edu.wpi.first.wpiutil.math.MathUtil;
@@ -64,6 +63,10 @@ public class Drivetrain extends SubsystemBase {
   
   // Also show a field diagram
   private final Field2d m_field2d = new Field2d();
+
+  // Create a slew rate filter to give more control over the speed from the joystick
+  private final SlewRateLimiter m_filter = new SlewRateLimiter(0.5);
+  private final SlewRateLimiter m_filter_turn = new SlewRateLimiter(0.5);
   
   // Used to put data onto Shuffleboard
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
@@ -100,7 +103,7 @@ public class Drivetrain extends SubsystemBase {
     // Call these to so that the information is immediatelly available in Simulator
     steer(0);
     arcadeDrive(0, 0);
-    turn(0,0,0);
+    turn(0);
 
     // Setup Odometry
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
@@ -114,6 +117,10 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("ArcadeDrive xaxisSpeed", xaxisSpeed);
     SmartDashboard.putNumber("ArcadeDrive zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
+  }
+
+  public void rateLimitedArcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    m_diffDrive.arcadeDrive(m_filter.calculate(xaxisSpeed), m_filter_turn.calculate(zaxisRotate));
   }
 
   /**
@@ -186,10 +193,8 @@ public class Drivetrain extends SubsystemBase {
     tankDrive(output, output);
   }
 
-  public void turn(double output, double position, double velocity) {
+  public void turn(double output) {
     // Restrict the turn speed
-    SmartDashboard.putNumber("Turn Position", position);
-    SmartDashboard.putNumber("Turn Velocity", velocity);
     double zRotation = MathUtil.clamp(output, -0.5, 5.0);
     arcadeDrive(0, zRotation); 
   }
@@ -284,12 +289,23 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    publishTelemetry();
+  }
+
+  /**  
+   * Publishes telemetry data to the Network Tables for use
+   * in Shuffleboard and the Simulator
+  */
+  public void publishTelemetry() {
     // Update the odometry in the periodic block
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     
     // Offset the pose to start 1.5 meters on the Y axis
+    double yPoseOffset = 1.5;
     Pose2d currentPose = getPose();
-    Pose2d poseOffset = new Pose2d(currentPose.getX(), currentPose.getY() + 1.5, currentPose.getRotation());
+    Pose2d poseOffset = new Pose2d(currentPose.getX(), 
+                                   currentPose.getY() + yPoseOffset, 
+                                   currentPose.getRotation());
     // Update the Field2D object (so that we can visualize this in sim)
     m_field2d.setRobotPose(poseOffset);
 
@@ -303,7 +319,7 @@ public class Drivetrain extends SubsystemBase {
     // Offset the pose to start 1.5 meters on the Y axis
     Pose2d currentEstimatedPose = getEstimatedPose();
     Pose2d estimatedPoseOffset = new Pose2d(currentEstimatedPose.getX(), 
-                                            currentEstimatedPose.getY() + 1.5, 
+                                            currentEstimatedPose.getY() + yPoseOffset, 
                                             currentEstimatedPose.getRotation());
 
     // Update the Field2D object (so that we can visualize this in sim)
