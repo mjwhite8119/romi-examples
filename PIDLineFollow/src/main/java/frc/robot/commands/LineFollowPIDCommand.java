@@ -23,14 +23,12 @@ public class LineFollowPIDCommand extends PIDCommand {
 
     public LineFollowPIDCommand(Drivetrain drive) {
         super(
-            new PIDController(DriveConstants.kPDriveVel,
-                              DriveConstants.kIDriveVel,
-                              DriveConstants.kDDriveVel), 
+            new PIDController(VisionConstants.kP,0,0), 
             RobotContainer.m_vision::getCenterX, 
             VisionConstants.SETPOINT,
             output -> {
                 // Use the output here
-                drive.steer(-output);
+                drive.driveLine(-output);
               },
             RobotContainer.m_drivetrain
         );

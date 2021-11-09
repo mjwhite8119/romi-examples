@@ -113,6 +113,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
+        public static final double kP = -0.015;
         public static final int END_OF_LINE = 550;
         public static final int SETPOINT = 85;
         public static final double OUTPUT_TOLERENCE = 0.2;

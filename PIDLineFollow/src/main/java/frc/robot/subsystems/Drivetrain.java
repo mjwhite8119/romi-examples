@@ -193,6 +193,19 @@ public class Drivetrain extends SubsystemBase {
     tankDrive(output, output);
   }
 
+  /**
+   * Drives a straight line at the requested output -1.0..1.0
+   * 
+   * @param output Output value between -1.0..1.0
+   */
+  public void driveLine(double rotate) {
+    SmartDashboard.putNumber("Rotate", rotate);
+
+    // Slow down around tight bends
+    double speed = 0.5 - (Math.abs(rotate) * 0.2);
+    arcadeDrive(speed, rotate);
+  }
+
   public void turn(double output) {
     // Restrict the turn speed
     double zRotation = MathUtil.clamp(output, -0.5, 5.0);
