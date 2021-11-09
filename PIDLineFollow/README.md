@@ -9,6 +9,6 @@ The following classes and commands have been created.
 
 - A python vision program that gets uploaded to the Romi to extract objects of interest from the camera stream.  This program will put relevant data into the Network Tables so as the PIDLineFollow program can use it to follow the line.  This python program resides in the *Vision* folder of this project.
 
-- **Vision** - This class extracts data from the Network Tables that was put there by the python vision program that runs on the Romi.
+- **Vision** - This class gets data from the Network Tables that was put there by the python vision program running on the Romi.
 
 - **LineFollowPIDCommand** - Follows the line using the x-center line data from the Vision class.

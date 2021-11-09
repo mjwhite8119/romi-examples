@@ -10,8 +10,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -19,42 +17,44 @@ import frc.robot.subsystems.Vision;
 
 public class LineFollowPIDCommand extends PIDCommand {
     private static Drivetrain m_drive;
-    private final Vision visionSubsystem;
+    private final Vision m_vision;
 
-    public LineFollowPIDCommand(Drivetrain drive) {
+    public LineFollowPIDCommand(Drivetrain drive, Vision vision) {
         super(
             new PIDController(VisionConstants.kP,0,0), 
-            RobotContainer.m_vision::getCenterX, 
+            vision::getCenterX, 
             VisionConstants.SETPOINT,
             output -> {
                 // Use the output here
                 drive.driveLine(-output);
               },
-            RobotContainer.m_drivetrain
+            drive
         );
-        m_drive = RobotContainer.m_drivetrain;
-        visionSubsystem = RobotContainer.m_vision;
+        m_drive = drive;
+        m_vision = vision;
     }
 
     public void initialize() {
         super.initialize();
         // Make sure everything starts from zero
         m_drive.arcadeDrive(0, 0);
+        m_vision.resetFilter();
     }
 
     public void execute() {
         super.execute();
         SmartDashboard.putNumber("Error", getController().getPositionError());
-        SmartDashboard.putBoolean("Finished", getController().atSetpoint());
+        SmartDashboard.putBoolean("Finished", false);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.arcadeDrive(0, 0);
+        // m_drive.arcadeDrive(0, 0);
+        SmartDashboard.putBoolean("Finished", true);
     }
 
     @Override
     public boolean isFinished() {
-        return visionSubsystem.getRectArea() < VisionConstants.END_OF_LINE;
+        return m_vision.getRectArea() < VisionConstants.END_OF_LINE;
     }
 }

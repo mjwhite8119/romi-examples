@@ -5,6 +5,11 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
+
+import java.time.Instant;
+
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutonomousFollowLine extends SequentialCommandGroup {
@@ -14,10 +19,12 @@ public class AutonomousFollowLine extends SequentialCommandGroup {
    *
    * @param drivetrain The drivetrain subsystem on which this command will run
    */
-  public AutonomousFollowLine(Drivetrain drivetrain) {
+  public AutonomousFollowLine(Drivetrain drive, Vision vision) {
     addCommands(
-        new LineFollowPIDCommand(drivetrain),
-        new TurnToAngleProfiled(180, drivetrain),
-        new LineFollowPIDCommand(drivetrain));
+        new InstantCommand(drive::resetOdometry, drive),
+        new LineFollowPIDCommand(drive, vision),
+        new TurnDegrees(-0.5, 180, drive),
+        new LineFollowPIDCommand(drive, vision),
+        new TurnDegrees(0.5, 180, drive));
   }
 }

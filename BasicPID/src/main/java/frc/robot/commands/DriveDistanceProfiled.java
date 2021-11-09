@@ -74,6 +74,11 @@ public class DriveDistanceProfiled extends ProfiledPIDCommand {
     SmartDashboard.putBoolean("atGoal", getController().atGoal());
   }
   
+  @Override
+  public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("atGoal", getController().atGoal());
+  }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

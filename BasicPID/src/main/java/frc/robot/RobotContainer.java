@@ -93,7 +93,7 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Profiled Turn Angle PID", new TurnToAngleProfiled(90, m_drivetrain));
+    m_chooser.setDefaultOption("Profiled Turn Angle PID", new TurnToAngleProfiled(180, m_drivetrain));
     m_chooser.addOption("Drive Distance PID", new DriveDistancePID(1.0, m_drivetrain));
     m_chooser.addOption("Profiled Distance PID", new DriveDistanceProfiled(1.0, m_drivetrain));
     m_chooser.addOption("Turn Degrees PID", new TurnToAnglePID(90, m_drivetrain));

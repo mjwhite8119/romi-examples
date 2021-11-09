@@ -199,11 +199,13 @@ public class Drivetrain extends SubsystemBase {
    * @param output Output value between -1.0..1.0
    */
   public void driveLine(double rotate) {
-    SmartDashboard.putNumber("Rotate", rotate);
+
+    // Restrict the turn speed
+    double zRotation = MathUtil.clamp(rotate, -0.5, 5.0);
 
     // Slow down around tight bends
-    double speed = 0.5 - (Math.abs(rotate) * 0.2);
-    arcadeDrive(speed, rotate);
+    double speed = 0.5 - (Math.abs(zRotation) * 0.05);
+    arcadeDrive(speed, zRotation);
   }
 
   public void turn(double output) {
@@ -356,9 +358,10 @@ public class Drivetrain extends SubsystemBase {
    * Resets the odometry to the specified pose
    * @param pose The pose to which to set the odometry
    */
-  public void resetOdometry(Pose2d pose) {
+  public void resetOdometry() {
     resetEncoders();
-    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+    resetGyro();
+    // m_odometry.resetPosition(pose, m_gyro.getRotation2d());
   }
 
   /**

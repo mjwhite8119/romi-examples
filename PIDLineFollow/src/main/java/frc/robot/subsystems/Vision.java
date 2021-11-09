@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.rmi.activation.ActivationGroup;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.MedianFilter;
@@ -25,7 +27,7 @@ public class Vision extends SubsystemBase {
     private int rectHeight;
 
     // Moving average filter used to smooth out control outputs
-    private MedianFilter m_filter = new MedianFilter(5);
+    private MedianFilter m_filter = new MedianFilter(10);
 
     public Vision() {
         visionEntry = NetworkTableInstance.getDefault().getTable("targetData").getEntry("data");
@@ -63,8 +65,14 @@ public class Vision extends SubsystemBase {
         return rectHeight;
     }
 
+    public void resetFilter() {
+        m_filter.reset();
+    }
+
     public int getRectArea() {
-        return rectWidth * rectHeight;
+        int avgArea = (int)m_filter.calculate(rectWidth * rectHeight);
+        SmartDashboard.putNumber("Average Area", avgArea);
+        return avgArea;
     }
 }
 

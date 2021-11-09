@@ -41,7 +41,7 @@ public final class Constants {
         public static final double kMaxAccelMetersPerSecondSquared = 0.5;
 
         public static final double kMaxTurnRateDegPerS = 360;
-        public static final double kMaxTurnAccelDegPerSSquared = 250;
+        public static final double kMaxTurnAccelDegPerSSquared = 200;
 
         // The linear inertia gain, volts
         public static final double ksVolts = 0.461;

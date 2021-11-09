@@ -8,8 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.AutonomousFollowLine;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -23,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.commands.PIDLineFollow;
+import frc.robot.commands.TurnDegrees;
 import frc.robot.commands.LineFollowPIDCommand;
 
 /**
@@ -34,9 +33,9 @@ import frc.robot.commands.LineFollowPIDCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public static final Drivetrain m_drivetrain = new Drivetrain();
+  private static final Drivetrain m_drivetrain = new Drivetrain();
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
-  public static final Vision m_vision = new Vision();
+  private static final Vision m_vision = new Vision();
 
   // Assumes a gamepad plugged into channnel 0
   private final Joystick m_controller = new Joystick(0);
@@ -80,9 +79,9 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("PID Line Follow", new LineFollowPIDCommand(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
-    m_chooser.addOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
+    m_chooser.setDefaultOption("Auto Follow Line", new AutonomousFollowLine(m_drivetrain, m_vision));
+    m_chooser.addOption("PID Line Follow", new LineFollowPIDCommand(m_drivetrain, m_vision));
+    m_chooser.addOption("Turn 180 Degrees", new TurnDegrees(-0.4, 180, m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 
