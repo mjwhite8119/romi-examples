@@ -5,23 +5,27 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveDistance extends CommandBase {
   private final Drivetrain m_drive;
-  private final double m_distance;
+  private double m_distance;
   private final double m_speed;
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  NetworkTable table = inst.getTable("Shuffleboard/Drivetrain");
 
   /**
    * Creates a new DriveDistance. This command will drive your your robot for a desired distance at
    * a desired speed.
    *
    * @param speed The speed at which the robot will drive
-   * @param inches The number of inches the robot will drive
+   * @param meters The number of meters the robot will drive
    * @param drive The drivetrain subsystem on which this command will run
    */
-  public DriveDistance(double speed, double inches, Drivetrain drive) {
-    m_distance = inches;
+  public DriveDistance(double speed, double meters, Drivetrain drive) {
+    m_distance = meters;
     m_speed = speed;
     m_drive = drive;
     addRequirements(drive);
@@ -32,6 +36,10 @@ public class DriveDistance extends CommandBase {
   public void initialize() {
     m_drive.arcadeDrive(0, 0);
     m_drive.resetEncoders();
+
+    // Override distance here from Shuffleboard/Network Tables
+    m_distance = table.getEntry("Auto Distance").getDouble(0);
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,6 +58,6 @@ public class DriveDistance extends CommandBase {
   @Override
   public boolean isFinished() {
     // Compare distance travelled from start to desired distance
-    return Math.abs(m_drive.getAverageDistanceInch()) >= m_distance;
+    return Math.abs(m_drive.getAverageDistanceMeters()) >= m_distance;
   }
 }

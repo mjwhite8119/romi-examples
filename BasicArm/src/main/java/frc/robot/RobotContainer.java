@@ -72,6 +72,7 @@ public class RobotContainer {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
+    m_arm.setDefaultCommand(setTiltLevel());
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
@@ -83,8 +84,8 @@ public class RobotContainer {
     configureArmBindings();
     
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    m_chooser.setDefaultOption("Auto Move Arm UP", new PositionArm(m_arm, 1));
+    m_chooser.addOption("Auto Move Arm DOWN", new PositionArm(m_arm, 0));
     SmartDashboard.putData(m_chooser);
   }
 
@@ -112,8 +113,8 @@ public class RobotContainer {
       .whenPressed(new PositionArm(m_arm, 0)); 
       
     // Add commands to Shuffleboard
-    SmartDashboard.putData("Move Arm UP", new PositionArm(m_arm, 1));  
-    SmartDashboard.putData("Move Arm DOWN", new PositionArm(m_arm, 0));   
+    SmartDashboard.putData("Arm UP", new PositionArm(m_arm, 1));  
+    SmartDashboard.putData("Arm DOWN", new PositionArm(m_arm, 0));   
   }
 
   /**
@@ -133,5 +134,14 @@ public class RobotContainer {
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
         m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(0));
+  }
+
+  /**
+   * Set the default command for the Arm
+   * Set the tilt level
+   * 
+   */
+  public Command setTiltLevel() {
+    return new PositionArm(m_arm, 1);
   }
 }
