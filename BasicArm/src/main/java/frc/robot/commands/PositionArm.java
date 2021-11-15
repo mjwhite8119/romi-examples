@@ -8,13 +8,13 @@ import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class PositionArm extends SequentialCommandGroup {
-  /* Creates a new PositionArm. 
+  /** Creates a new PositionArm. 
    *  
    * @param arm Arm subsystem
-   * @param direction the arm should move
+   * @param direction the arm should move 1 or -1
    * 
   */
-  public PositionArm(Arm arm, double direction) {
+  public PositionArm(Arm arm, int direction) {
     addCommands(
       // Start by setting the tilt to max up.
       new PositionTilt(arm, 1),

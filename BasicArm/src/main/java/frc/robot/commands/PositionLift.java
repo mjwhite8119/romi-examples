@@ -12,15 +12,14 @@ public class PositionLift extends CommandBase {
     private final Arm m_arm;
     private double m_direction = 0;
 
-    /*
+    /**
      * Creates a new PositionLift command.
      * 
-     * @param arm Arm subsystem
-     * 
-     * @param direction of travel for the arm
+     * @param arm Arm subsystem 
+     * @param direction of travel for the arm 1 or -1
      * 
      */
-    public PositionLift(Arm arm, double direction) {
+    public PositionLift(Arm arm, int direction) {
     m_arm = arm;
     m_direction = direction;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,23 +28,15 @@ public class PositionLift extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("Starting max Lift..");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     // Move the Lift up until is reaches its max position
-    if(m_direction == 1) {
-      System.out.println("Lift UP " + m_arm.getLiftPos());
-      m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT);          
-    }
-
-    // Move the Lift down until is reaches its max position
-    if(m_direction == 0) {
-      System.out.println("Lift DOWN " + m_arm.getLiftPos());
-      m_arm.incrementLift(-Constants.Arm.SERVO_INCREMENT);       
-    }
+    m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT * m_direction);          
   }
 
   // Called once the command ends or is interrupted.
@@ -61,7 +52,7 @@ public class PositionLift extends CommandBase {
         return true;
       }  
     } else {
-      if (m_direction == 0) {
+      if (m_direction == -1) {
         if (m_arm.liftAtMin()) {
           System.out.println("FINISHED DOWN Lift=" + m_arm.getLiftPos());
           return true;

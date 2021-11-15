@@ -7,9 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.JoystickArm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -18,14 +19,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 // New components added to this project.
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.PositionArm;
 import frc.robot.commands.PositionLift;
 import frc.robot.commands.PositionTilt;
-import frc.robot.commands.JoystickArm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,7 +39,8 @@ public class RobotContainer {
   public final Arm m_arm = new Arm();
 
   // Assumes a gamepad plugged into channnel 0
-  private final Joystick m_controller = new Joystick(0);
+  private final XboxController m_joystick = new XboxController(0);
+  private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -72,7 +72,7 @@ public class RobotContainer {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
-    m_arm.setDefaultCommand(setTiltLevel());
+    // m_arm.setDefaultCommand(setTiltLevel());
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
@@ -90,27 +90,13 @@ public class RobotContainer {
   }
 
   public void configureArmBindings() {
-    m_arm.setDefaultCommand( new JoystickArm(m_arm, m_controller));
+    m_arm.setDefaultCommand( new JoystickArm(m_arm, m_joystickIO));
 
-    // Tilt UP
-    new JoystickButton(m_controller, Constants.Joystick.START)
-      .whenPressed(new PositionTilt(m_arm, 1));
-
-    // Lift UP  
-    new JoystickButton(m_controller, Constants.Joystick.SELECT)
-      .whenPressed(new PositionLift(m_arm, 1));  
-
-    // Lift DOWN
-    new JoystickButton(m_controller, Constants.Joystick.BOTTOM_DIR)
-      .whenPressed(new PositionLift(m_arm, 0));  
-
-    // Move Arm UP
-    new JoystickButton(m_controller, Constants.Joystick.CROSS_BUTTON)
-      .whenPressed(new PositionArm(m_arm, 1));  
-
-    // Move Arm DOWN
-    new JoystickButton(m_controller, Constants.Joystick.SQUARE_BUTTON)
-      .whenPressed(new PositionArm(m_arm, 0)); 
+    // Move Arm full UP
+    m_joystickIO.moveArmFullUp().whenPressed(new PositionArm(m_arm, 1));
+    
+    // Move Arm full DOWN
+    m_joystickIO.moveArmFullDown().whenPressed(new PositionArm(m_arm, -1));
       
     // Add commands to Shuffleboard
     SmartDashboard.putData("Arm UP", new PositionArm(m_arm, 1));  
@@ -133,7 +119,7 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(0));
+        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(0));
   }
 
   /**

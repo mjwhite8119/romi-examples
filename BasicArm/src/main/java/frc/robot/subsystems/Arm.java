@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.commands.PositionTilt;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +46,7 @@ public class Arm extends SubsystemBase {
   public void incrementTilt(double delta) {
     m_tiltPos = saturateLimit(m_tiltPos + delta, Constants.Arm.TILT_MIN, Constants.Arm.TILT_MAX);
     m_tilt.set(m_tiltPos);
+    System.out.println("Inc Tilt = " + m_tiltPos);
   }
 
   /**
@@ -57,6 +57,7 @@ public class Arm extends SubsystemBase {
   public void incrementLift(double delta) {
     m_liftPos = saturateLimit(m_liftPos + delta,  Constants.Arm.LIFT_MIN,  Constants.Arm.LIFT_MAX); 
     m_lift.set(m_liftPos);
+    System.out.println("Inc Lift = " + m_liftPos);
   }
 
   /** 
@@ -129,5 +130,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Gripper Position", getGripperPos());
     SmartDashboard.putNumber("Lift Position", getLiftPos());
     SmartDashboard.putNumber("Tilt Position", getTiltPos());
+
+    SmartDashboard.putBoolean("Max Tilt", tiltAtMax());
+    SmartDashboard.putBoolean("Min Tilt", tiltAtMin());
+    SmartDashboard.putBoolean("Max Lift", liftAtMax());
+    SmartDashboard.putBoolean("Min Tilt", liftAtMin());
   }
 }

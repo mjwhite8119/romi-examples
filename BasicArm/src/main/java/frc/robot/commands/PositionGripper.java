@@ -8,17 +8,19 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class PositionTilt extends CommandBase {
+public class PositionGripper extends CommandBase {
+  /** Creates a new PositionGripper. */
   private final Arm m_arm;
   private double m_direction = 0;
-  
-  /**  Creates a new PositionTilt command. 
-   *  
-   * @param arm Arm subsystem
-   * @param direction of travel for the arm 1 or -1
+
+  /**
+   * Creates a new PositionLift command.
    * 
-  */
-  public PositionTilt(Arm arm, int direction) {
+   * @param arm Arm subsystem 
+   * @param direction of travel for the gripper 1 (open) or -1 (close)
+   * 
+   */
+  public PositionGripper(Arm arm, int direction) {
     m_arm = arm;
     m_direction = direction;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,33 +29,22 @@ public class PositionTilt extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    System.out.println("Starting max tilt..");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Move the tilt UP or DOWN until is reaches its max position
-    m_arm.incrementTilt(Constants.Arm.SERVO_INCREMENT * m_direction);          
+    // Move the Gripper until is reaches its max position
+    m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT * m_direction); 
   }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_direction == 1) {
-      if (m_arm.tiltAtMax()) {
-        System.out.println("FINISHED UP Tilt=" + m_arm.getTiltPos());
-        return true;
-      }  
-    } else {
-      if (m_direction == -1) {
-        if (m_arm.tiltAtMin()) {
-          System.out.println("FINISHED DOWN Tilt=" + m_arm.getTiltPos());
-          return true;
-        } 
-      }      
-    }  
     return false;
   }
 }
