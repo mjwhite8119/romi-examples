@@ -25,6 +25,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.commands.PositionArm;
 import frc.robot.commands.PositionLift;
 import frc.robot.commands.PositionTilt;
+import frc.robot.commands.StopMotors;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -83,7 +84,7 @@ public class RobotContainer {
     // Example of how to use the external IO
     Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
     extIO0Button
-        .whenActive(new PrintCommand("Bumper Pressed"))
+        .whenActive(new StopMotors(m_drivetrain))
         .whenInactive(new PrintCommand("Bumper Released"));    
 
     // Setup bindings to control the arm

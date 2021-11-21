@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.StopMotors;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -73,7 +74,7 @@ public class RobotContainer {
     // Example of how to use the external IO
     Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
     extIO0Button
-        .whenActive(new PrintCommand("Bumper Pressed"))
+        .whenActive(new StopMotors(m_drivetrain))
         .whenInactive(new PrintCommand("Bumper Released"));        
 
     // Setup SmartDashboard options
