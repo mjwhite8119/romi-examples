@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class OnBoardIO extends SubsystemBase {
   private final DigitalInput m_buttonA = new DigitalInput(0);
   private final DigitalOutput m_yellowLed = new DigitalOutput(3);
+  private final DigitalInput m_extDigitalInput0 = new DigitalInput(8);
 
   // DIO 1
   private DigitalInput m_buttonB;
@@ -55,6 +56,11 @@ public class OnBoardIO extends SubsystemBase {
     } else {
       m_redLed = new DigitalOutput(2);
     }
+  }
+
+  /** Gets if the button connected to extIO0 is pressed. */
+  public boolean getExt0Pressed() {
+    return m_extDigitalInput0.get();
   }
 
   /** Gets if the A button is pressed. */

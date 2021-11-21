@@ -70,6 +70,12 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
+    // Example of how to use the external IO
+    Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
+    extIO0Button
+        .whenActive(new PrintCommand("Bumper Pressed"))
+        .whenInactive(new PrintCommand("Bumper Released"));        
+
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
     m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));

@@ -48,6 +48,18 @@ public class JoystickIO {
         return m_controller.getTriggerAxis(Hand.kLeft) > 0.1 && 
                m_controller.getTriggerAxis(Hand.kRight) > 0.1;
     });
-}
+  }
+
+  public Button openGripper() {
+    return new Button(() -> {
+        return m_controller.getTriggerAxis(Hand.kLeft) > 0.1;
+    });
+  }
+
+  public Button closeGripper() {
+    return new Button(() -> {
+        return m_controller.getTriggerAxis(Hand.kRight) > 0.1;
+    });
+  }
 
 }

@@ -50,8 +50,8 @@ public class DriveDistancePID extends PIDCommand {
     super.initialize();
     // Override PID parameters from Shuffleboard
     getController().setSetpoint(table.getEntry("Distance").getDouble(0.0));
-    getController().setP(table.getEntry("distanceP").getDouble(1.0));
-    getController().setD(table.getEntry("distanceD").getDouble(0.0));
+    getController().setP(table.getEntry("kP").getDouble(DriveConstants.kPDriveVel));
+    getController().setD(table.getEntry("kD").getDouble(DriveConstants.kDDriveVel));
   }
   
 

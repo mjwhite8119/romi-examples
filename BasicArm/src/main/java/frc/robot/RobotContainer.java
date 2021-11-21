@@ -80,12 +80,18 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
+    // Example of how to use the external IO
+    Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
+    extIO0Button
+        .whenActive(new PrintCommand("Bumper Pressed"))
+        .whenInactive(new PrintCommand("Bumper Released"));    
+
     // Setup bindings to control the arm
     configureArmBindings();
     
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Move Arm UP", new PositionArm(m_arm, 1));
-    m_chooser.addOption("Auto Move Arm DOWN", new PositionArm(m_arm, 0));
+    m_chooser.addOption("Auto Move Arm DOWN", new PositionArm(m_arm, -1));
     SmartDashboard.putData(m_chooser);
   }
 
@@ -100,7 +106,7 @@ public class RobotContainer {
       
     // Add commands to Shuffleboard
     SmartDashboard.putData("Arm UP", new PositionArm(m_arm, 1));  
-    SmartDashboard.putData("Arm DOWN", new PositionArm(m_arm, 0));   
+    SmartDashboard.putData("Arm DOWN", new PositionArm(m_arm, -1));   
   }
 
   /**
