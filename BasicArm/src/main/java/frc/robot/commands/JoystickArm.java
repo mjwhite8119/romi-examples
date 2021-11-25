@@ -4,10 +4,9 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.IO.JoystickIO;
 import frc.robot.subsystems.Arm;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class JoystickArm extends CommandBase {
@@ -46,42 +45,37 @@ public class JoystickArm extends CommandBase {
 
     if (m_joystick.moveLiftDown().get()) {
     // if(m_joystick.getRawButton(Constants.Joystick.CIRCLE_BUTTON)) {
-      m_arm.incrementLift(-Constants.Arm.SERVO_INCREMENT);
+      m_arm.lift(-ArmConstants.SERVO_INCREMENT);
       System.out.print("Lift - ");System.out.println(m_arm.getLiftPos());
     }
 
     if (m_joystick.moveLiftUp().get()) {
     // if(m_joystick.getRawButton(Constants.Joystick.TRIANGLE_BUTTON)) {
-      m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT);
+      m_arm.lift(ArmConstants.SERVO_INCREMENT);
       System.out.print("Lift + " );System.out.println(m_arm.getLiftPos());
     }
 
     if (m_joystick.moveTiltUp().get()) {
     // if(m_joystick.getRawButton(Constants.Joystick.TOP_DIR)) {
-      m_arm.incrementTilt(Constants.Arm.SERVO_INCREMENT);
+      m_arm.tilt(ArmConstants.SERVO_INCREMENT);
       System.out.print("Tilt + " );System.out.println(m_arm.getTiltPos());
     }
 
     if (m_joystick.moveTiltDown().get()) {
     // if(m_joystick.getRawButton(Constants.Joystick.LEFT_DIR)) {
-      m_arm.incrementTilt(-Constants.Arm.SERVO_INCREMENT);
+      m_arm.tilt(-ArmConstants.SERVO_INCREMENT);
       System.out.print("Tilt - " );System.out.println(m_arm.getTiltPos());
     }
 
     if (m_joystick.openGripper().get()) {
-      m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT);
+      m_arm.gripper(ArmConstants.SERVO_INCREMENT);
       System.out.println("Gripper Pos + " + m_arm.getGripperPos());
     }
 
     if (m_joystick.closeGripper().get()) {
-      m_arm.incrementGripper(-Constants.Arm.SERVO_INCREMENT);
+      m_arm.gripper(-ArmConstants.SERVO_INCREMENT);
       System.out.println("Gripper Pos - " + m_arm.getGripperPos());
     }
-
-    // if(m_joystick.getRawButton(Constants.Joystick.R2_BUTTON)) {
-    //   m_arm.incrementGripper(-Constants.Arm.SERVO_INCREMENT);
-    //   System.out.println("Gripper Pos - " + m_arm.getGripperFeedbackPos());
-    // }
     
   }
 

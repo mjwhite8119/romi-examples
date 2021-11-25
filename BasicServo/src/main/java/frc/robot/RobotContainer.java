@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.ExtIOConstants;
+import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 
 import frc.robot.subsystems.RomiServo;
 import frc.robot.commands.ServoCommand;
+import frc.robot.commands.StopMotors;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,8 +37,11 @@ public class RobotContainer {
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
 
   // Assumes a gamepad plugged into channnel 0
-  private final Joystick m_controller = new Joystick(0);
-  private final RomiServo m_servo = new RomiServo();
+  // private final Joystick m_joystick = new Joystick(0);
+  private final XboxController m_joystick = new XboxController(0);
+  private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
+
+  private final RomiServo m_servo = new RomiServo(ExtIOConstants.PWM4_PORT);
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -68,13 +74,19 @@ public class RobotContainer {
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
-    m_servo.setDefaultCommand( new ServoCommand(m_servo, m_controller));
+    m_servo.setDefaultCommand( new ServoCommand(m_servo, m_joystickIO));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
     onboardButtonA
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
+
+    // Example of how to use the external IO
+    // Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
+    // extIO0Button
+    //     .whenActive(new StopMotors(m_drivetrain))
+    //     .whenInactive(new PrintCommand("Bumper Released"));          
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
@@ -98,6 +110,6 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(2));
+        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(4));
   }
 }

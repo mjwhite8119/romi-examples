@@ -10,6 +10,7 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.commands.StopMotors;
+import frc.robot.subsystems.Bumper;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
@@ -33,6 +34,7 @@ public class RobotContainer {
   // Assumes a gamepad plugged into channnel 0
   // private final Joystick m_joystick = new Joystick(0);
   private final XboxController m_joystick = new XboxController(0);
+  private final Bumper m_bumper = new Bumper();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -71,9 +73,9 @@ public class RobotContainer {
         .whenActive(new PrintCommand("Button A Pressed"))
         .whenInactive(new PrintCommand("Button A Released"));
 
-    // Example of how to use the external IO
-    Button extIO0Button = new Button(m_onboardIO::getExt0Pressed);
-    extIO0Button
+    // Bumper button attached to external IO port
+    Button bumperButton = new Button(m_bumper::getBumperPressed);
+    bumperButton
         .whenActive(new StopMotors(m_drivetrain))
         .whenInactive(new PrintCommand("Bumper Released"));        
 

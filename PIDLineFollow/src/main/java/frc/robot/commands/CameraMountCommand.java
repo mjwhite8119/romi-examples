@@ -6,13 +6,14 @@ package frc.robot.commands;
 
 import frc.robot.Constants.ServoConstants;
 import frc.robot.IO.JoystickIO;
+import frc.robot.subsystems.CameraMount;
 import frc.robot.subsystems.RomiServo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ServoCommand extends CommandBase {
+public class CameraMountCommand extends CommandBase {
 
-  private final RomiServo m_servo;
+  private final CameraMount m_camera_mount;
   private final JoystickIO m_joystick;
 
   /* Creates a new command which controls the romi_servo via 
@@ -22,11 +23,11 @@ public class ServoCommand extends CommandBase {
    * @param joystick Joystick to be used to control the romi_servo
    * 
    */
-  public ServoCommand(RomiServo servo,
-                      JoystickIO joystick) {
-    m_servo = servo;
+  public CameraMountCommand(CameraMount cameraMount,
+                            JoystickIO joystick) {
+    m_camera_mount = cameraMount;
     m_joystick = joystick;
-    addRequirements(servo);
+    addRequirements(cameraMount);
   }
 
   // Called when the command is initially scheduled.
@@ -37,16 +38,25 @@ public class ServoCommand extends CommandBase {
   @Override
   public void execute() {
 
-    if(m_joystick.moveServoLeft().get()) {
-      m_servo.incrementServo(-ServoConstants.SERVO_INCREMENT);
-      System.out.println("servo -" );
+    if(m_joystick.panLeft().get()) {
+      m_camera_mount.pan(-ServoConstants.SERVO_INCREMENT);
+      System.out.println("Pan left" );
     }
-    if(m_joystick.moveServoRight().get()) {
-      m_servo.incrementServo(ServoConstants.SERVO_INCREMENT);
-      System.out.println("servo +" );
+    if(m_joystick.panRight().get()) {
+      m_camera_mount.pan(ServoConstants.SERVO_INCREMENT);
+      System.out.println("Pan right" );
+    }
+    if(m_joystick.tiltUp().get()) {
+      m_camera_mount.tilt(-ServoConstants.SERVO_INCREMENT);
+      System.out.println("Tilt up" );
+    }
+    if(m_joystick.tiltDown().get()) {
+      m_camera_mount.tilt(ServoConstants.SERVO_INCREMENT);
+      System.out.println("Tilt down" );
     }
 
-    SmartDashboard.putNumber("servo angle", m_servo.getCurrentAngle());
+    SmartDashboard.putNumber("Camera Pan angle", m_camera_mount.getPanAngle());
+    SmartDashboard.putNumber("Camera Tilt angle", m_camera_mount.getTiltAngle());
   }
 
 

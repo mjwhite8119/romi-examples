@@ -32,5 +32,18 @@ public final class Constants {
     public static final double rightVoltsGain = 1.094;
 
   }
+
+  public final class ExtIOConstants {
+    // Port configuration to match physical configuration on
+    // Romi board as well as configuration on http://wpilib.local
+    public static final int DIO0_PORT = 8;
+
+    // The Romi has the left and right motors set to
+    // PWM channels 0 and 1 respectively
+    public static final int PWM2_PORT = 2;
+    public static final int PWM3_PORT = 3;
+    public static final int PWM4_PORT = 4;
+  }
+
 }
 

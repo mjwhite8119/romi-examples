@@ -4,13 +4,13 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class PositionTilt extends CommandBase {
   private final Arm m_arm;
-  private double m_direction = 0;
+  private double m_direction = 1;
   
   /**  Creates a new PositionTilt command. 
    *  
@@ -35,7 +35,7 @@ public class PositionTilt extends CommandBase {
   @Override
   public void execute() {
     // Move the tilt UP or DOWN until is reaches its max position
-    m_arm.incrementTilt(Constants.Arm.SERVO_INCREMENT * m_direction);          
+    m_arm.tilt(ArmConstants.SERVO_INCREMENT * m_direction);          
   }
 
   // Returns true when the command should end.

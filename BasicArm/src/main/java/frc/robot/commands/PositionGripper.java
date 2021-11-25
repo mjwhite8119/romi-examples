@@ -4,14 +4,14 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class PositionGripper extends CommandBase {
   /** Creates a new PositionGripper. */
   private final Arm m_arm;
-  private double m_direction = 0;
+  private double m_direction = 1;
 
   /**
    * Creates a new PositionLift command.
@@ -35,7 +35,7 @@ public class PositionGripper extends CommandBase {
   @Override
   public void execute() {
     // Move the Gripper until is reaches its max position
-    m_arm.incrementGripper(Constants.Arm.SERVO_INCREMENT * m_direction); 
+    m_arm.gripper(ArmConstants.SERVO_INCREMENT * m_direction); 
   }
 
   // Called once the command ends or is interrupted.

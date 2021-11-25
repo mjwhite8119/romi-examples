@@ -133,7 +133,7 @@ public final class Constants {
         public static final int UNKNOWN_BUTTON = 17;
     }
 
-    public final class Arm {
+    public final class ArmConstants {
         // Port configuration to match physical configuration on
         // Romi board as well as configuration on http://wpilib.local
         public static final int LIFT_PORT = 4;
@@ -151,17 +151,24 @@ public final class Constants {
         // Lift range 1000 - 1900 -> .222 - .722
         // Tilt range 1200 - 1900 -> .333 - .722
         // Gripper range 500 - 2400 -> 0 - 1
-        public static final double LIFT_MIN = 0.222;
-        // public static final double LIFT_MIN = 0.550;
-        public static final double LIFT_MAX = 0.722;
-        // public static final double TILT_MIN = 0.697;
-        public static final double TILT_MIN = 0.333;
-        public static final double TILT_MAX = 0.722;
-        public static final double GRIPPER_MIN = 0.0;
-        public static final double GRIPPER_MAX = 0.86;
+        // public static final double LIFT_MIN = 0.222;
+        // public static final double LIFT_MAX = 0.722;
+        // public static final double TILT_MIN = 0.333;
+        // public static final double TILT_MAX = 0.722;
+        // public static final double GRIPPER_MIN = 0.0;
+        // public static final double GRIPPER_MAX = 0.86;
+
+        // Set ranges in degrees
+        public static final int LIFT_MIN = 94;
+        public static final int LIFT_MAX = 120;
+        public static final int TILT_MIN = 129;
+        public static final int TILT_MAX = 140;
+        public static final int GRIPPER_MIN = 0;
+        public static final int GRIPPER_MAX = 140;
 
         // Incremental amount of change for each button press
         // or during the periodic check while holding the button down
-        public static final double SERVO_INCREMENT = 0.005;
+        // public static final double SERVO_INCREMENT = 0.005;
+        public static final double SERVO_INCREMENT = 1.0;
     }
 }

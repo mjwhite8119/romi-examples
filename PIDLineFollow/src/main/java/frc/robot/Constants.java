@@ -139,4 +139,26 @@ public final class Constants {
         public static final int SQUARE_BUTTON = 16;
         public static final int UNKNOWN_BUTTON = 17;
     }
+
+    public final class ExtIOConstants {
+        // Port configuration to match physical configuration on
+        // Romi board as well as configuration on http://wpilib.local
+        public static final int DIO0_PORT = 8;
+
+        // The Romi has the left and right motors set to
+        // PWM channels 0 and 1 respectively
+        public static final int PWM2_PORT = 2;
+        public static final int PWM3_PORT = 3;
+        public static final int PWM4_PORT = 4;
+    }
+    
+    public final class ServoConstants {
+        
+        public static final double MIN_RANGE = 0.222;
+        public static final double MAX_RANGE = 0.722;
+        
+        // Incremental amount of change for each button press
+        // or during the periodic check while holding the button down
+        public static final double SERVO_INCREMENT = 1.0;
+    }
 }

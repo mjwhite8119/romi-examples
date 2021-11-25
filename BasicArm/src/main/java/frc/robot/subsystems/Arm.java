@@ -4,10 +4,7 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Servo;
+import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,39 +12,40 @@ public class Arm extends SubsystemBase {
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
-  private final Servo m_lift = new Servo(Constants.Arm.LIFT_PORT);
-  private final Servo m_tilt = new Servo(Constants.Arm.TILT_PORT);
-  private final Servo m_gripper = new Servo(Constants.Arm.GRIPPER_PORT);
-  private final AnalogInput m_gripperRead = new AnalogInput(Constants.Arm.GRIPPER_FEEDBACK_PORT);
-  private double m_liftPos;
-  private double m_tiltPos;
-  private double m_gripperPos;
+  private final RomiServo m_gripper = new RomiServo(ArmConstants.GRIPPER_PORT);
+  private final RomiServo m_tilt = new RomiServo(ArmConstants.TILT_PORT);
+  private final RomiServo m_lift = new RomiServo(ArmConstants.LIFT_PORT);
+  // private final AnalogInput m_gripperRead = new AnalogInput(Constants.Arm.GRIPPER_FEEDBACK_PORT);
 
-  // Creates a new Arm subsystem
-  public Arm() {
-    reset();
+  public enum ArmPart {
+    GRIPPER,
+    TILT,
+    LIFT
   }
 
-  // Reset position to resting state
-  public void reset() {
-    m_liftPos = 0.5;
-    m_tiltPos = 0.5;
-    m_gripperPos = 0.5;
+  /** 
+   * Constructor
+   * Creates a new Arm subsystem
+   * 
+  */ 
+  public Arm() {
+    // Set the min/max range for each component
+    m_gripper.setAngleRange(ArmConstants.GRIPPER_MIN, ArmConstants.GRIPPER_MAX);
+    m_tilt.setAngleRange(ArmConstants.TILT_MIN, ArmConstants.TILT_MAX);
+    m_lift.setAngleRange(ArmConstants.LIFT_MIN, ArmConstants.LIFT_MAX);
 
-    m_lift.set(m_liftPos);
-    m_tilt.set(m_tiltPos);
-    m_gripper.set(m_gripperPos);
+    // Set the default angle position
+    m_tilt.setDefaultAngle(ArmConstants.TILT_MIN);
+    m_lift.setDefaultAngle(ArmConstants.LIFT_MIN);
   }
 
   /** 
    * Increment tilt motor position
    * 
-   * @param delta Amount to change motor position
+   * @param delta Amount to change motor position per loop cycle
    */
-  public void incrementTilt(double delta) {
-    m_tiltPos = saturateLimit(m_tiltPos + delta, Constants.Arm.TILT_MIN, Constants.Arm.TILT_MAX);
-    m_tilt.set(m_tiltPos);
-    System.out.println("Inc Tilt = " + m_tiltPos);
+  public void tilt(double delta) {
+    m_tilt.incrementServo(delta);
   }
 
   /**
@@ -55,10 +53,8 @@ public class Arm extends SubsystemBase {
    * 
    * @param delta Amount to change motor position
    */
-  public void incrementLift(double delta) {
-    m_liftPos = saturateLimit(m_liftPos + delta,  Constants.Arm.LIFT_MIN,  Constants.Arm.LIFT_MAX); 
-    m_lift.set(m_liftPos);
-    System.out.println("Inc Lift = " + m_liftPos);
+  public void lift(double delta) {
+    m_lift.incrementServo(delta);
   }
 
   /** 
@@ -66,56 +62,44 @@ public class Arm extends SubsystemBase {
    * 
    * @param delta Amount to change motor position
    */ 
-  public void incrementGripper(double delta) {
-    m_gripperPos = saturateLimit(m_gripperPos + delta,  Constants.Arm.GRIPPER_MIN,  Constants.Arm.GRIPPER_MAX); 
-    m_gripper.set(m_gripperPos);
+  public void gripper(double delta) {
+    m_gripper.incrementServo(delta);
   }
 
   // Get lift motor position 
   public double getLiftPos() {
-    return m_liftPos;
+    return m_lift.getCurrentAngle();
   }
 
   // Get tilt motor position 
   public double getTiltPos() {
-    return m_tiltPos;
+    return m_tilt.getCurrentAngle();
   }
 
   // Get lift motor position 
   public double getGripperPos() {
-    return m_gripperPos;
+    return m_gripper.getCurrentAngle();
   }
 
-  // Get gripper motor position from feedback signal
-  public int getGripperFeedbackPos() {
-    return m_gripperRead.getAverageValue();
-  }
-
-  // Limit motor range to avoid moving beyond safe ranges
-  public double saturateLimit(double val, double l_limit, double u_limit) {
-    double outval = val;
-    if(val > u_limit) {
-      outval =  u_limit;
-    } else if (val < l_limit) {
-      outval = l_limit;
-    }
-    return outval;
-  }
+  // // Get gripper motor position from feedback signal
+  // public int getGripperFeedbackPos() {
+  //   return m_gripperRead.getAverageValue();
+  // }
 
   public boolean liftAtMax() {
-    return m_liftPos == Constants.Arm.LIFT_MAX;
+    return m_lift.atMaxAngle();
   }
 
   public boolean liftAtMin() {
-    return m_liftPos == Constants.Arm.LIFT_MIN;
+    return m_lift.atMinAngle();
   }
 
   public boolean tiltAtMax() {
-    return m_tiltPos == Constants.Arm.TILT_MAX;
+    return m_tilt.atMaxAngle();
   }
 
   public boolean tiltAtMin() {
-    return m_tiltPos == Constants.Arm.TILT_MIN;
+    return m_tilt.atMinAngle();
   }
 
   public boolean armAtMax() {

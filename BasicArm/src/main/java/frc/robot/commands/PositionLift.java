@@ -4,13 +4,13 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class PositionLift extends CommandBase {
     private final Arm m_arm;
-    private double m_direction = 0;
+    private double m_direction = 1;
 
     /**
      * Creates a new PositionLift command.
@@ -36,7 +36,7 @@ public class PositionLift extends CommandBase {
   @Override
   public void execute() {
     // Move the Lift up until is reaches its max position
-    m_arm.incrementLift(Constants.Arm.SERVO_INCREMENT * m_direction);          
+    m_arm.lift(ArmConstants.SERVO_INCREMENT * m_direction);          
   }
 
   // Called once the command ends or is interrupted.

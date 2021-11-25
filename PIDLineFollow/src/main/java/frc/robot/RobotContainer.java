@@ -7,10 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.ExtIOConstants;
+import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousFollowLine;
+import frc.robot.subsystems.CameraMount;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
+import frc.robot.subsystems.RomiServo;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +28,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.TurnDegrees;
 import frc.robot.commands.LineFollowPIDCommand;
+import frc.robot.commands.CameraMountCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,7 +43,10 @@ public class RobotContainer {
   private static final Vision m_vision = new Vision();
 
   // Assumes a gamepad plugged into channnel 0
-  private final Joystick m_controller = new Joystick(0);
+  private final XboxController m_joystick = new XboxController(0);
+  private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
+
+  private final CameraMount m_camera_mount = new CameraMount();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -71,6 +79,7 @@ public class RobotContainer {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
+    m_camera_mount.setDefaultCommand( new CameraMountCommand(m_camera_mount, m_joystickIO));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
@@ -115,6 +124,6 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_controller.getRawAxis(1), () -> m_controller.getRawAxis(2));
+        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(2));
   }
 }
