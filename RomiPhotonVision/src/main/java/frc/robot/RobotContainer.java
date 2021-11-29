@@ -6,13 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.CameraMountCommand;
+import frc.robot.commands.LineFollow;
 import frc.robot.commands.StopMotors;
-import frc.robot.subsystems.Bumper;
+import frc.robot.commands.TurnDegrees;
+import frc.robot.subsystems.CameraMount;
+// import frc.robot.subsystems.Bumper;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
+import frc.robot.subsystems.RomiCamera;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +39,11 @@ public class RobotContainer {
   // private final Joystick m_joystick = new Joystick(0);
   private final XboxController m_joystick = new XboxController(0);
   // private final Bumper m_bumper = new Bumper();
+  private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
+
+  // Add vision components
+  private final CameraMount m_camera_mount = new CameraMount();
+  private final RomiCamera m_photon_camera = new RomiCamera();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -67,6 +76,8 @@ public class RobotContainer {
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
+    m_camera_mount.setDefaultCommand( new CameraMountCommand(m_camera_mount, m_joystickIO));
+
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
     onboardButtonA
@@ -80,8 +91,8 @@ public class RobotContainer {
     //     .whenInactive(new PrintCommand("Bumper Released"));        
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
+    m_chooser.setDefaultOption("Auto Follow Line", new LineFollow(m_drivetrain, m_photon_camera));
+    m_chooser.addOption("Turn 180 Degrees", new TurnDegrees(-0.4, 180, m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }
 

@@ -16,6 +16,7 @@ import frc.robot.commands.AutonomousFollowLine;
 import frc.robot.subsystems.CameraMount;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
+import frc.robot.subsystems.RomiCamera;
 import frc.robot.subsystems.RomiServo;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.TurnDegrees;
 import frc.robot.commands.LineFollowPIDCommand;
 import frc.robot.commands.CameraMountCommand;
+import frc.robot.commands.LineFollow;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,7 +52,7 @@ public class RobotContainer {
 
   private final CameraMount m_camera_mount = new CameraMount();
 
-  // private final PhotonCamera m_photon_camera = new PhotonCamera("photonvision");
+  private final RomiCamera m_photon_camera = new RomiCamera();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -92,7 +94,8 @@ public class RobotContainer {
         .whenInactive(new PrintCommand("Button A Released"));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Follow Line", new AutonomousFollowLine(m_drivetrain, m_vision));
+    m_chooser.setDefaultOption("Auto Follow Line", new LineFollow(m_drivetrain, m_photon_camera));
+    m_chooser.addOption("Auto Follow Line", new AutonomousFollowLine(m_drivetrain, m_vision));
     m_chooser.addOption("PID Line Follow", new LineFollowPIDCommand(m_drivetrain, m_vision));
     m_chooser.addOption("Turn 180 Degrees", new TurnDegrees(-0.4, 180, m_drivetrain));
     SmartDashboard.putData(m_chooser);
