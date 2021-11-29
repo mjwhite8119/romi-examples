@@ -23,11 +23,13 @@ public class RomiServo extends SubsystemBase {
 
   public void setDefaultAngle(double angle){
     m_defaultAngle = angle;
+    m_servoAngle = m_defaultAngle;
     reset();
   }
   // Reset position to resting state
   public void reset() {
     m_servo.setAngle(m_servoAngle);
+    System.out.print("reset angle to " );System.out.println(m_servoAngle);
   }
 
   /** 

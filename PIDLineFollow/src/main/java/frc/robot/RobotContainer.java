@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -47,6 +49,8 @@ public class RobotContainer {
   private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
 
   private final CameraMount m_camera_mount = new CameraMount();
+
+  // private final PhotonCamera m_photon_camera = new PhotonCamera("photonvision");
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();

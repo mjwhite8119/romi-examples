@@ -18,7 +18,9 @@ public class CameraMount extends SubsystemBase {
    * Creates a new CameraMount. 
    * 
   */
-  public CameraMount() {}
+  public CameraMount() {
+    m_pan.setDefaultAngle(98);
+  }
 
   /**
    * Pan the camera mount left and right
