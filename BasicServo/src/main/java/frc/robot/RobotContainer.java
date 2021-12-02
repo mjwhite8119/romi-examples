@@ -12,8 +12,10 @@ import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.MultiServoCommand;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.MultiServoSubsystem;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -42,7 +44,8 @@ public class RobotContainer {
   private final XboxController m_joystick = new XboxController(0);
   private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
 
-  private final RomiServo m_servo = new RomiServo(ExtIOConstants.PWM4_PORT);
+  // private final RomiServo m_servo = new RomiServo(ExtIOConstants.PWM4_PORT);
+  private final MultiServoSubsystem m_servos = new MultiServoSubsystem();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -75,7 +78,9 @@ public class RobotContainer {
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
-    m_servo.setDefaultCommand( new ServoCommand(m_servo, m_joystickIO));
+    // m_servo.setDefaultCommand( new ServoCommand(m_servo, m_joystickIO));
+    m_servos.setDefaultCommand( new MultiServoCommand(m_servos, m_joystickIO));
+
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
