@@ -202,6 +202,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void driveLine(double rotate) {
 
+    SmartDashboard.putNumber("Driveline rotate", rotate);
     // Restrict the turn speed
     double zRotation = MathUtil.clamp(rotate, -0.5, 5.0);
 

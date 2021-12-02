@@ -9,8 +9,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.IO.JoystickIO;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CameraMountCommand;
+import frc.robot.commands.CameraMountLineFollow;
 import frc.robot.commands.LineFollow;
+import frc.robot.commands.PanCamera;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.StopMotors;
+import frc.robot.commands.TiltCamera;
 import frc.robot.commands.TurnDegrees;
 import frc.robot.subsystems.CameraMount;
 // import frc.robot.subsystems.Bumper;
@@ -43,7 +47,7 @@ public class RobotContainer {
 
   // Add vision components
   private final CameraMount m_camera_mount = new CameraMount();
-  private final RomiCamera m_photon_camera = new RomiCamera();
+  private final RomiCamera m_romi_camera = new RomiCamera();
 
   // Create SmartDashboard chooser for autonomous routines
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -91,7 +95,10 @@ public class RobotContainer {
     //     .whenInactive(new PrintCommand("Bumper Released"));        
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Follow Line", new LineFollow(m_drivetrain, m_photon_camera));
+    m_chooser.setDefaultOption("Photon Follow Line", new CameraMountLineFollow(m_drivetrain, m_camera_mount, m_romi_camera));
+    m_chooser.addOption("Reset Odometry", new ResetOdometry(m_drivetrain));
+    m_chooser.addOption("Tilt Camera", new TiltCamera(m_camera_mount, 78.0));
+    m_chooser.addOption("Pan Camera", new PanCamera(m_camera_mount, 98.0));
     m_chooser.addOption("Turn 180 Degrees", new TurnDegrees(-0.4, 180, m_drivetrain));
     SmartDashboard.putData(m_chooser);
   }

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -31,7 +32,7 @@ public class LineFollow extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          drive.driveLine(-output);
+          drive.driveLine(output);
         },
         drive
         );
@@ -43,12 +44,24 @@ public class LineFollow extends PIDCommand {
     super.initialize();
     // Make sure everything starts from zero
     m_drive.arcadeDrive(0, 0);
+    SmartDashboard.putBoolean("Command Finished", false);
     // m_vision.resetFilter();
+  }
+
+  public void execute() {
+    super.execute();
+    SmartDashboard.putNumber("Error", getController().getPositionError());    
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+      // m_drive.arcadeDrive(0, 0);
+      SmartDashboard.putBoolean("Command Finished", true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !m_vision.hasTargets();
+    return m_vision.hasTargets() == false;
   }
 }

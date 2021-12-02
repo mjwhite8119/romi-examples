@@ -16,6 +16,8 @@ public class JoystickIO {
     m_controller = controller;
   }
 
+  // The joystick methods names should be declarative for your application
+  // e.g. panLeft/panRight
   public Button moveServoLeft() {
     return new JoystickButton(m_controller, XboxController.Button.kX.value);
   }

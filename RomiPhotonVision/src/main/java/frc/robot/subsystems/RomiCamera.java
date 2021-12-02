@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,17 +23,28 @@ public class RomiCamera extends SubsystemBase {
   final double GOAL_RANGE_METERS = Units.feetToMeters(0.5);
 
   // Change this to match the name of your camera
-  PhotonCamera m_camera = new PhotonCamera("photonvision");
+  PhotonCamera m_camera = new PhotonCamera("mmal_service_16.1");
   private PhotonPipelineResult m_result;
   
   /** 
    * Contructor
    * Creates a new RomiCamera. 
    * */
-  public RomiCamera() {}
+  public RomiCamera() {
+    m_result = m_camera.getLatestResult();
+    // Returns hasTargets = false should be true.
+    SmartDashboard.putBoolean("Vision hasTargets", m_result.hasTargets());
+  }
 
   public double getYaw() {
-    return m_result.getBestTarget().getYaw();
+    if (hasTargets()) {
+      double yawOffset = 0.12;
+      SmartDashboard.putNumber("Yaw with Offset", m_result.getBestTarget().getYaw() - yawOffset);
+      return m_result.getBestTarget().getYaw();
+    } else {
+      System.out.println("NO Target!!!" );
+      return 0.0;
+    } 
   }
 
   public double getSkew() {
@@ -39,13 +52,13 @@ public class RomiCamera extends SubsystemBase {
   }
 
   public boolean hasTargets() {
-    // var result = m_camera.getLatestResult();
+    m_result = m_camera.getLatestResult();
     return m_result.hasTargets();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_result = m_camera.getLatestResult();
+    // m_result = m_camera.getLatestResult();
   }
 }
