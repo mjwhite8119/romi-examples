@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -31,6 +32,28 @@ public final class Constants {
     // than the left wheel on this robot.
     public static final double rightVoltsGain = 1.094;
 
+    // Offset in the Y direction for the initial Pose
+    public static final double yPoseOffset = 1.5;
+
+    // -------- Dynamical Constants --------------------
+
+    // Max speed and acceleration of the robot
+    public static final double kMaxSpeedMetersPerSecond = 0.5;
+    public static final double kMaxAccelMetersPerSecondSquared = 0.5;
+
+    // -------- PID Constants --------------------
+
+    // Drive profile
+    public static final TrapezoidProfile.Constraints kTrapezoidProfileConstraints =
+        new TrapezoidProfile.Constraints(DriveConstants.kMaxSpeedMetersPerSecond,
+                                        DriveConstants.kMaxAccelMetersPerSecondSquared);                                
+
+    // For distances PID
+    public static final double kPDriveVel = 0.5;
+    // public static final double kIDriveVel = 0.1;
+    public static final double kIDriveVel = 0;
+    public static final double kDDriveVel = 0;
+
   }
 
   public final class ExtIOConstants {
@@ -47,6 +70,9 @@ public final class Constants {
 
   public static final class VisionConstants {
     public static final double kP = -0.03;
+    public static final double ForwardKP = 0.3;
+    public static final double ForwardKD = 0.0;
+    public static final double TurnKP = 0.01;
     // public static final int END_OF_LINE = 420;
     // public static final int SETPOINT = 85;
     // public static final double OUTPUT_TOLERENCE = 0.2;

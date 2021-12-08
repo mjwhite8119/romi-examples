@@ -84,11 +84,29 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    SmartDashboard.putNumber("xaxisSpeed", xaxisSpeed);
+    SmartDashboard.putNumber("zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
   public void rateLimitedArcadeDrive(double xaxisSpeed, double zaxisRotate) {
     m_diffDrive.arcadeDrive(m_filter.calculate(xaxisSpeed), m_filter_turn.calculate(zaxisRotate));
+  }
+
+  /**
+   * Drives a straight line at the requested output -1.0..1.0
+   * 
+   * @param output Output value between -1.0..1.0
+   */
+  public void driveLine(double rotate) {
+
+    SmartDashboard.putNumber("Driveline rotate", rotate);
+    // Restrict the turn speed
+    double zRotation = MathUtil.clamp(rotate, -0.5, 5.0);
+
+    // Slow down around tight bends
+    double speed = 0.5 - (Math.abs(zRotation) * 0.05);
+    arcadeDrive(speed, zRotation);
   }
 
   public void resetEncoders() {
@@ -194,59 +212,50 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     publishTelemetry();
   }
-
-  /**
-   * Drives a straight line at the requested output -1.0..1.0
-   * 
-   * @param output Output value between -1.0..1.0
-   */
-  public void driveLine(double rotate) {
-
-    SmartDashboard.putNumber("Driveline rotate", rotate);
-    // Restrict the turn speed
-    double zRotation = MathUtil.clamp(rotate, -0.5, 5.0);
-
-    // Slow down around tight bends
-    double speed = 0.5 - (Math.abs(zRotation) * 0.05);
-    arcadeDrive(speed, zRotation);
-  }
   
-  /**  
-   * Publishes telemetry data to the Network Tables for use
-   * in Shuffleboard and the Simulator
-  */
-  public void publishTelemetry() {
+  public void publishOdometry() {
     // Update the odometry in the periodic block
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     
-    // Offset the pose to start 1.5 meters on the Y axis
-    double yPoseOffset = 1.5;
     Pose2d currentPose = getPose();
     Pose2d poseOffset = new Pose2d(currentPose.getX(), 
-                                   currentPose.getY() + yPoseOffset, 
+                                   currentPose.getY() + DriveConstants.yPoseOffset, 
                                    currentPose.getRotation());
+
     // Update the Field2D object (so that we can visualize this in sim)
     m_field2d.setRobotPose(poseOffset);
+  }
 
+  public void publishEstimatedPose() {
     // Updates the the Unscented Kalman Filter using only wheel encoder information.
     m_estimator.update(m_gyro.getRotation2d(), 
                       getWheelSpeeds(), 
                        m_leftEncoder.getDistance(), 
                        m_rightEncoder.getDistance());
 
-
     // Offset the pose to start 1.5 meters on the Y axis
     Pose2d currentEstimatedPose = getEstimatedPose();
     Pose2d estimatedPoseOffset = new Pose2d(currentEstimatedPose.getX(), 
-                                            currentEstimatedPose.getY() + yPoseOffset, 
+                                            currentEstimatedPose.getY() + DriveConstants.yPoseOffset, 
                                             currentEstimatedPose.getRotation());
 
     // Update the Field2D object (so that we can visualize this in sim)
     m_estimatedField2d.setRobotPose(estimatedPoseOffset);
+  }
 
+  /**  
+   * Publishes telemetry data to the Network Tables for use
+   * in Shuffleboard and the Simulator
+  */
+  public void publishTelemetry() {
+    
+    publishOdometry();
+
+    // publishEstimatedPose();
+    
     // Display the meters per/second for each wheel and the heading
-    SmartDashboard.putNumber("Left Encoder Velocity", m_leftEncoder.getRate());
-    SmartDashboard.putNumber("Right Encoder Velocity", m_rightEncoder.getRate());
+    // SmartDashboard.putNumber("Left Encoder Velocity", m_leftEncoder.getRate());
+    // SmartDashboard.putNumber("Right Encoder Velocity", m_rightEncoder.getRate());
     SmartDashboard.putNumber("Heading", getHeading());
   }
 

@@ -11,8 +11,10 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CameraMountCommand;
 import frc.robot.commands.CameraMountLineFollow;
 import frc.robot.commands.LineFollow;
+import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.PanCamera;
 import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.RomiCameraCommand;
 import frc.robot.commands.StopMotors;
 import frc.robot.commands.TiltCamera;
 import frc.robot.commands.TurnDegrees;
@@ -80,7 +82,11 @@ public class RobotContainer {
     // is scheduled over it.
     m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
+    // Default command to control the camera mount servos if they are installed
     m_camera_mount.setDefaultCommand( new CameraMountCommand(m_camera_mount, m_joystickIO));
+
+    // Default command to run the RomiCamera which gets its data from PhotonVision.
+    m_romi_camera.setDefaultCommand(new RomiCameraCommand(m_romi_camera));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
@@ -95,7 +101,8 @@ public class RobotContainer {
     //     .whenInactive(new PrintCommand("Bumper Released"));        
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Photon Follow Line", new CameraMountLineFollow(m_drivetrain, m_camera_mount, m_romi_camera));
+    m_chooser.setDefaultOption("Move to Target", new MoveToTarget(m_drivetrain, m_romi_camera, 0.10));
+    m_chooser.addOption("Follow Line", new CameraMountLineFollow(m_drivetrain, m_camera_mount, m_romi_camera));
     m_chooser.addOption("Reset Odometry", new ResetOdometry(m_drivetrain));
     m_chooser.addOption("Tilt Camera", new TiltCamera(m_camera_mount, 78.0));
     m_chooser.addOption("Pan Camera", new PanCamera(m_camera_mount, 98.0));

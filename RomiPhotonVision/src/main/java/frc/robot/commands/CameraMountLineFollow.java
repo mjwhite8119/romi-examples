@@ -20,6 +20,7 @@ public class CameraMountLineFollow extends SequentialCommandGroup {
 
     addCommands(new PanCamera(cameraMount, 98.0),
                 new TiltCamera(cameraMount, 78.0),
+                new SleepCommand(1.0),
                 new LineFollow(drive, camera),
                 new TurnDegrees(-0.4, 180, drive),
                 new LineFollow(drive, camera)

@@ -5,41 +5,51 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RomiCamera extends SubsystemBase {
   // Constants such as camera and target height stored. Change per robot and goal!
-  final double CAMERA_HEIGHT_METERS = 0.1;
-  final double TARGET_HEIGHT_METERS = 0.0;
+  final double CAMERA_HEIGHT_METERS = 0.092;
+  final double TARGET_HEIGHT_METERS = 0.002;
 
   // Angle between horizontal and the camera.
-  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-10);
+  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-18);
 
   // How far from the target we want to be
-  final double GOAL_RANGE_METERS = Units.feetToMeters(0.5);
+  // final double GOAL_RANGE_METERS = Units.feetToMeters(0.25);
 
   // Change this to match the name of your camera
   PhotonCamera m_camera = new PhotonCamera("mmal_service_16.1");
   private PhotonPipelineResult m_result;
   
+  // Moving average filter used to smooth out target range
+  private MedianFilter m_filter = new MedianFilter(10);
+  private double m_range;
+  private double m_lastRange = 0.0;
+
+  private double m_lastPitch = 0.0;
+
+  // Moving average filter used to check for a consistent target
+  private MedianFilter m_targetFilter = new MedianFilter(10);
+  private int m_gotTarget = 0;
   /** 
    * Contructor
-   * Creates a new RomiCamera. 
+   * Creates a new RomiCamera that gets its data from PhotonVision
    * */
   public RomiCamera() {
     m_result = m_camera.getLatestResult();
-    // Returns hasTargets = false should be true.
-    SmartDashboard.putBoolean("Vision hasTargets", m_result.hasTargets());
   }
 
   public double getYaw() {
     if (hasTargets()) {
-      double yawOffset = 0.12;
-      SmartDashboard.putNumber("Yaw with Offset", m_result.getBestTarget().getYaw() - yawOffset);
+      // double yawOffset = 0.12;
+      // SmartDashboard.putNumber("Yaw with Offset", m_result.getBestTarget().getYaw() - yawOffset);
       return m_result.getBestTarget().getYaw();
     } else {
       System.out.println("NO Target!!!" );
@@ -47,13 +57,52 @@ public class RomiCamera extends SubsystemBase {
     } 
   }
 
+  public double getPitch() {
+    if (hasTargets()) {
+      m_lastPitch = m_result.getBestTarget().getPitch();
+      return m_lastPitch;
+    } else {
+      return m_lastPitch;
+    }
+  }
+
   public double getSkew() {
     return m_result.getBestTarget().getSkew();
+  }
+
+  public double getRange() {
+    if (hasTargets()) {
+      m_range = PhotonUtils.calculateDistanceToTargetMeters(
+                CAMERA_HEIGHT_METERS,
+                TARGET_HEIGHT_METERS,
+                CAMERA_PITCH_RADIANS,
+                Units.degreesToRadians(getPitch()));
+
+      m_lastRange = m_range;          
+      
+    } 
+    // Always return the last range and remove outliers
+    return m_filter.calculate(m_lastRange);
   }
 
   public boolean hasTargets() {
     m_result = m_camera.getLatestResult();
     return m_result.hasTargets();
+  }
+
+  public boolean lostTarget() {
+    if (hasTargets()) {
+      m_gotTarget = 1;
+    } else {
+      m_gotTarget = 0;
+    }
+    // If we got a target in the last 10 cycles return true
+    double result = m_targetFilter.calculate(m_gotTarget);
+    if (result > 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @Override
