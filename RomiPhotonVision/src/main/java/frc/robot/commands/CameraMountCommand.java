@@ -33,7 +33,7 @@ public class CameraMountCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Put it to default pan when we connect to the microcontroller.
+    // Put it to current pan position when we connect to the microcontroller.
     m_camera_mount.pan(ServoConstants.SERVO_INCREMENT);
   }
 

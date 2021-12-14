@@ -126,6 +126,8 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(4));
+        m_drivetrain, () -> -m_joystickIO.xAxisSpeed(), () -> m_joystickIO.zAxisRotate()
+        // m_drivetrain, () -> -m_joystickIO.xAxisBoostSpeed(), () -> m_joystickIO.zAxisBoostRotate()
+        );
   }
 }

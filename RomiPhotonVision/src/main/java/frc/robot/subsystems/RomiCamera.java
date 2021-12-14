@@ -4,22 +4,26 @@
 
 package frc.robot.subsystems;
 
+import javax.sound.sampled.Line;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.wpilibj.MedianFilter;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RomiCamera extends SubsystemBase {
   // Constants such as camera and target height stored. Change per robot and goal!
-  final double CAMERA_HEIGHT_METERS = 0.092;
-  final double TARGET_HEIGHT_METERS = 0.002;
+  // final double CAMERA_HEIGHT_METERS = 0.092;
+  final double CAMERA_HEIGHT_METERS = 0.10;
+  final double TARGET_HEIGHT_METERS = 0.02;
 
   // Angle between horizontal and the camera.
-  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-18);
+  // final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-18);
+  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-26.5);
 
   // How far from the target we want to be
   // final double GOAL_RANGE_METERS = Units.feetToMeters(0.25);
@@ -37,6 +41,7 @@ public class RomiCamera extends SubsystemBase {
 
   // Moving average filter used to check for a consistent target
   private MedianFilter m_targetFilter = new MedianFilter(10);
+  private LinearFilter m_pitchFilter = LinearFilter.singlePoleIIR(1.0, 0.02);
   private int m_gotTarget = 0;
   /** 
    * Contructor
@@ -60,14 +65,12 @@ public class RomiCamera extends SubsystemBase {
   public double getPitch() {
     if (hasTargets()) {
       m_lastPitch = m_result.getBestTarget().getPitch();
-      return m_lastPitch;
-    } else {
-      return m_lastPitch;
     }
+    return m_pitchFilter.calculate(m_lastPitch);
   }
 
-  public double getSkew() {
-    return m_result.getBestTarget().getSkew();
+  public double getPitchRadians() {
+    return Units.degreesToRadians(getPitch());
   }
 
   public double getRange() {
@@ -76,13 +79,22 @@ public class RomiCamera extends SubsystemBase {
                 CAMERA_HEIGHT_METERS,
                 TARGET_HEIGHT_METERS,
                 CAMERA_PITCH_RADIANS,
-                Units.degreesToRadians(getPitch()));
+                getPitchRadians());
 
       m_lastRange = m_range;          
       
     } 
     // Always return the last range and remove outliers
-    return m_filter.calculate(m_lastRange);
+    double filteredRange = m_filter.calculate(m_lastRange);
+    if (filteredRange < 0.5) {
+      filteredRange = filteredRange * 1.2;
+    }
+    return filteredRange;
+    // return m_filter.calculate(m_lastRange);
+  }
+
+  public double getSkew() {
+    return m_result.getBestTarget().getSkew();
   }
 
   public boolean hasTargets() {
@@ -103,6 +115,14 @@ public class RomiCamera extends SubsystemBase {
     } else {
       return true;
     }
+  }
+
+  public double getTargetHeight() {
+    return TARGET_HEIGHT_METERS - CAMERA_HEIGHT_METERS;
+  }
+
+  public double getCameraPitch() {
+    return CAMERA_PITCH_RADIANS;
   }
 
   @Override

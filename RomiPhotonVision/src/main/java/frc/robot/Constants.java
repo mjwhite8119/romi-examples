@@ -70,7 +70,7 @@ public final class Constants {
 
   public static final class VisionConstants {
     public static final double kP = -0.03;
-    public static final double ForwardKP = 0.3;
+    public static final double ForwardKP = 0.4;
     public static final double ForwardKD = 0.0;
     public static final double TurnKP = 0.01;
     // public static final int END_OF_LINE = 420;

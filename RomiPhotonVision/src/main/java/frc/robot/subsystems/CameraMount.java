@@ -20,6 +20,7 @@ public class CameraMount extends SubsystemBase {
   */
   public CameraMount() {
     m_pan.setDefaultAngle(98);
+    m_tilt.setDefaultAngle(94);
   }
 
   /**
@@ -28,6 +29,7 @@ public class CameraMount extends SubsystemBase {
    * @param delta Amount to change servo position (degrees)
    */
   public void pan(double delta) {
+    System.out.println("Panning" );
     m_pan.incrementServo(delta);
   }
 
@@ -56,6 +58,13 @@ public class CameraMount extends SubsystemBase {
     return m_tilt.getCurrentAngle();
   }
 
+  public RomiServo getPan() {
+    return m_pan;
+  }
+
+  public RomiServo getTilt() {
+    return m_tilt;
+  }
 
   @Override
   public void periodic() {

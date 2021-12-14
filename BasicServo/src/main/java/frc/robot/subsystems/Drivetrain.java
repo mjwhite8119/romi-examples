@@ -83,6 +83,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
+    SmartDashboard.putNumber("xaxisSpeed", xaxisSpeed);
+    SmartDashboard.putNumber("zaxisRotate", zaxisRotate);
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 

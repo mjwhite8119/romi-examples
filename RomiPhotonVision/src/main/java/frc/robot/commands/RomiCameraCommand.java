@@ -25,11 +25,17 @@ public class RomiCameraCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putNumber("Range Target Height", m_vision.getTargetHeight());
+    SmartDashboard.putNumber("Range Camera Pitch", m_vision.getCameraPitch());
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Range Target Pitch", 
+                        Math.tan(m_vision.getCameraPitch() + m_vision.getPitchRadians()));
+    SmartDashboard.putNumber("Range Pitch", m_vision.getPitchRadians());
     SmartDashboard.putNumber("Range", m_vision.getRange());
     SmartDashboard.putBoolean("Lost Target", m_vision.lostTarget());
   }

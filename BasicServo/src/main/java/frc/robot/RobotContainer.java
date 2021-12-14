@@ -39,9 +39,11 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
 
-  // Assumes a gamepad plugged into channnel 0
-  // private final Joystick m_joystick = new Joystick(0);
+  // Use this for Logitech/PS3 controller or Xbox
+  // private final Joystick m_joystick = new Joystick(1);
   private final XboxController m_joystick = new XboxController(0);
+
+  // Pass the appropriate controller into the IO mapping
   private final JoystickIO m_joystickIO = new JoystickIO(m_joystick);
 
   // private final RomiServo m_servo = new RomiServo(ExtIOConstants.PWM4_PORT);
@@ -111,6 +113,8 @@ public class RobotContainer {
    */
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
-        m_drivetrain, () -> -m_joystick.getRawAxis(1), () -> m_joystick.getRawAxis(4));
+        // m_drivetrain, () -> -m_joystickIO.xAxisSpeed(), () -> m_joystickIO.zAxisRotate()
+        m_drivetrain, () -> -m_joystickIO.xAxisBoostSpeed(), () -> m_joystickIO.zAxisBoostRotate()
+        );
   }
 }

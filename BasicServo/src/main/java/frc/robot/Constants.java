@@ -29,22 +29,6 @@ public final class Constants {
         // than the left wheel on this robot.
         public static final double rightVoltsGain = 1.094; 
     }
-      
-    public final class Joystick {
-        // Button mapping for a Logitech gamepad. 
-        public static final int X = 1;
-        public static final int A = 2;
-        public static final int B = 3;
-        public static final int Y = 4;
-        public static final int TOPLEFT = 5;
-        public static final int TOPRIGHT = 6;
-        public static final int BOTTOMLEFT = 7;
-        public static final int BOTTOMRIGHT = 8;
-        public static final int BACK = 9;
-        public static final int START = 10;
-        public static final int LEFT_ANALOG = 11;
-        public static final int RIGHT_ANALOG = 12;
-    }
 
     public final class ExtIOConstants {
         // Port configuration to match physical configuration on
