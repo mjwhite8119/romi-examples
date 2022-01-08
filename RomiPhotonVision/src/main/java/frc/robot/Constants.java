@@ -6,6 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -32,8 +37,9 @@ public final class Constants {
     // than the left wheel on this robot.
     public static final double rightVoltsGain = 1.094;
 
-    // Offset in the Y direction for the initial Pose
-    public static final double yPoseOffset = 1.5;
+    // Offset in the X and Y direction for the initial Pose
+    public static final double yPoseOffset = 1.0;
+    public static final double xPoseOffset = 0.25;
 
     // -------- Dynamical Constants --------------------
 
@@ -73,9 +79,22 @@ public final class Constants {
     public static final double ForwardKP = 0.4;
     public static final double ForwardKD = 0.0;
     public static final double TurnKP = 0.01;
-    // public static final int END_OF_LINE = 420;
-    // public static final int SETPOINT = 85;
-    // public static final double OUTPUT_TOLERENCE = 0.2;
+    
+    // Constants such as camera and target height stored. Change per robot and goal!
+    public static final double CAMERA_HEIGHT_METERS = 0.11;
+    public static final double TARGET_HEIGHT_METERS = 0.215;
+
+    // Angle between horizontal and the camera.
+    public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0.0);
+
+    // A Pose2d representing the target position in the field coordinate system.
+    public static final Pose2d kFieldToEndTarget = new Pose2d(2.5, 1.0, new Rotation2d(0.0));
+    public static final Pose2d kFieldToBeginTarget = new Pose2d(0.0, 1.0, new Rotation2d(180.0));
+    public static final Pose2d kFieldToLeftTarget = new Pose2d(1.25, 2.0, new Rotation2d(90.0));
+    public static final Pose2d kFieldToRightTarget = new Pose2d(1.25, 0.0, new Rotation2d(270.0));
+
+    public static final Transform2d kCameraToRobot 
+          = new Transform2d(new Translation2d(0.0, 0.0), new Rotation2d());
   }  
 
   public final class ServoConstants {

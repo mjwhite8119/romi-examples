@@ -38,6 +38,8 @@ public class RomiCameraCommand extends CommandBase {
     SmartDashboard.putNumber("Range Pitch", m_vision.getPitchRadians());
     SmartDashboard.putNumber("Range", m_vision.getRange());
     SmartDashboard.putBoolean("Lost Target", m_vision.lostTarget());
+    SmartDashboard.putNumber("Translation X",m_vision.getCameraToTargetTranslation().getX()); 
+    SmartDashboard.putNumber("Translation Y",m_vision.getCameraToTargetTranslation().getY());
   }
 
   // Called once the command ends or is interrupted.

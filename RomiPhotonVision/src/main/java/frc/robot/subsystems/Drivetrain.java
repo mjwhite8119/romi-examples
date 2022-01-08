@@ -61,6 +61,11 @@ public class Drivetrain extends SubsystemBase {
   // Show a field diagram for tracking Pose estimation
   private final Field2d m_estimatedField2d = new Field2d();
 
+  // Show a field diagram for tracking camera estimation
+  private final Field2d m_cameraField2d = new Field2d();
+
+  private final RomiCamera m_camera = new RomiCamera();
+
   // Create a slew rate filter to give more control over the speed from the joystick
   private final SlewRateLimiter m_filter = new SlewRateLimiter(0.5);
   private final SlewRateLimiter m_filter_turn = new SlewRateLimiter(0.5);
@@ -81,6 +86,9 @@ public class Drivetrain extends SubsystemBase {
 
     // Setup Pose Estimator
     SmartDashboard.putData("fieldEstimate", m_estimatedField2d);
+
+    // Setup Pose Estimator
+    SmartDashboard.putData("cameraEstimate", m_cameraField2d);
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
@@ -90,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void rateLimitedArcadeDrive(double xaxisSpeed, double zaxisRotate) {
-    m_diffDrive.arcadeDrive(m_filter.calculate(xaxisSpeed), m_filter_turn.calculate(zaxisRotate));
+    m_diffDrive.arcadeDrive(m_filter.calculate(xaxisSpeed), m_filter_turn.calculate(zaxisRotate * 0.5));
   }
 
   /**
@@ -218,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     
     Pose2d currentPose = getPose();
-    Pose2d poseOffset = new Pose2d(currentPose.getX(), 
+    Pose2d poseOffset = new Pose2d(currentPose.getX() + DriveConstants.xPoseOffset, 
                                    currentPose.getY() + DriveConstants.yPoseOffset, 
                                    currentPose.getRotation());
 
@@ -235,12 +243,17 @@ public class Drivetrain extends SubsystemBase {
 
     // Offset the pose to start 1.5 meters on the Y axis
     Pose2d currentEstimatedPose = getEstimatedPose();
-    Pose2d estimatedPoseOffset = new Pose2d(currentEstimatedPose.getX(), 
+    Pose2d estimatedPoseOffset = new Pose2d(currentEstimatedPose.getX() + DriveConstants.xPoseOffset, 
                                             currentEstimatedPose.getY() + DriveConstants.yPoseOffset, 
                                             currentEstimatedPose.getRotation());
 
     // Update the Field2D object (so that we can visualize this in sim)
     m_estimatedField2d.setRobotPose(estimatedPoseOffset);
+  }
+
+  public void publishCameraPose() {
+    // Update the Field2D object (so that we can visualize this in sim)
+    m_cameraField2d.setRobotPose(m_camera.getFieldToRobot(getHeading()));
   }
 
   /**  
@@ -252,6 +265,7 @@ public class Drivetrain extends SubsystemBase {
     publishOdometry();
 
     // publishEstimatedPose();
+    publishCameraPose();
     
     // Display the meters per/second for each wheel and the heading
     // SmartDashboard.putNumber("Left Encoder Velocity", m_leftEncoder.getRate());
